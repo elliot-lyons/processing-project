@@ -1,0 +1,49 @@
+class AboutUs {
+
+  int screen;
+  ArrayList widgetList;
+  
+  PImage template;
+
+  Widget Title, Elliot, Vicky, Ali, Ana;
+
+  PFont widgetFont;
+
+  AboutUs (int screen) {
+    this.screen = screen;
+
+    widgetFont = loadFont("AgencyFont.vlw");
+    textFont(widgetFont);
+    
+    template = loadImage("aboutusWallpaper.jpg");
+
+    widgetList = new ArrayList();
+
+    Title = new Widget (450, 15, 725, 60, "Who are we?", 
+      color (255, 255, 255), widgetFont, TITLE);
+    Elliot = new Widget (20, 200, 350, 60, "Elliot - lyonse7@tcd.ie", 
+      color (255, 255, 255), widgetFont, TITLE);
+    Vicky = new Widget (20, 280, 350, 60, "fabijanw@tcd.ie", 
+      color (255, 255, 255), widgetFont, TITLE);
+    Ali = new Widget (20, 360, 350, 60, "alania@tcd.ie", 
+      color (255, 255, 255), widgetFont, TITLE);
+    Ana = new Widget (20, 440, 350, 60, "bogosloa@tcd.ie", 
+      color (255, 255, 255), widgetFont, TITLE);  
+
+    widgetList.add(Title);
+  }
+
+  void settings() {
+    size(SCREEN_X, SCREEN_Y);
+  }
+
+  void draw() {
+    image(template, 1, 1);                                 
+    template.resize(1600, 1200);      //Background
+    Title.draw();
+    Elliot.draw();
+    Vicky.draw();
+    Ali.draw();
+    Ana.draw();
+  }
+}

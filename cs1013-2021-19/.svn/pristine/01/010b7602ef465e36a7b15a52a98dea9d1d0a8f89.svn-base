@@ -1,0 +1,425 @@
+import org.gicentre.geomap.*;
+import java.util.Map;
+import org.gicentre.utils.stat.*;
+import org.gicentre.handy.*;
+
+final int EVENT_BUTTON1 = 1;
+final int EVENT_BUTTON2 = 2;
+final int EVENT_BUTTON3 = 3;
+final int EVENT_NULL = 0;
+
+//widgets and changind screen
+Screen[] screens;
+PFont stdFont;
+color red = color(255, 0, 0);
+color green = color(0, 255, 0);
+color blue = color(0, 0, 255);
+color currentColor = color(0);
+boolean firstScreen = true;
+Screen currentScreen;
+
+HandyRenderer handWritten;
+
+GeoMap geoMap;                // Declare the geoMap object.
+String stateName;
+int stateId;
+
+Table userData;
+TableRow row;
+
+DataRow aDataRow;
+ArrayList theDataRows;
+
+PFont arialMt;
+
+BarChart StatesXCases;
+XYChart SXCLineChart;
+int i;
+PVector SXCVector;
+
+//HashMap
+StatesData theStatesCases;      
+HashMap<String, Integer> StateCases;
+HashMap<String, Integer> AreaCases;
+
+int noOfCases;
+int addNewCases;
+
+int numberOfCases = 0;
+int addMoreCases = 0;
+
+String date;
+String area;
+String areas;
+String state;
+String geoId;
+int cases;
+
+//mouseWheel
+float y;
+float f; //= 0.001;
+int P=0;
+boolean dragging = false;
+int imgx, imgy;
+
+String[] States;
+int[] Cases;
+int CasesNumber;
+String StateNames;
+
+String[] Areas;
+int[] CasesInAreas;
+int theCasesInAreas;
+
+PImage ocean;
+void setup() {
+  size(1000, 700);
+  ocean = loadImage("ocean.jpeg");
+  ocean.resize(1000, 700);
+  //hand fill
+  handWritten = new HandyRenderer(this);
+
+  //different hand drawings
+  //handWritten = HandyPresets.createMarker(this);
+  //handWritten = HandyPresets.createWaterAndInk(this);
+  //handWritten = HandyPresets.createColouredPencil(this);
+  //handWritten = HandyPresets.createPencil(this);
+  //handWritten.setSeed(100);
+
+  //widgets initialisation
+  Widget widget2, widget4;
+  screens = new Screen[2];
+  screens[0] = new Screen(211);
+  screens[1] = new Screen(255);
+  stdFont = createFont("Georgia", 18);
+  textFont(stdFont);
+
+  widget2 = new Widget(100, 200, 100, 40, "Forward", color(245, 242, 30), 
+    stdFont, EVENT_BUTTON2);
+  widget4 = new Widget(100, 200, 100, 40, "Backward", color( 230, 0, 255), 
+    stdFont, EVENT_BUTTON2);
+  //screens
+  screens[0].addWidget(widget2);
+  screens[1].addWidget(widget4);
+  //load data
+  userData = loadTable("cases1k.csv", "header");          // importing the file of 1 million cases
+  i = 0;
+  theDataRows = new ArrayList();
+
+  //font
+  arialMt = createFont("ArialMT", 24);
+  textFont(arialMt);
+  frameRate(5);
+
+  //geoMap
+  geoMap = new GeoMap(10, 10, 800, 550, this);  // Create the geoMap object.
+  geoMap.readFile("States_shapefile");   // Reads shapefile.
+  textAlign(LEFT, BOTTOM);
+  textSize(18);
+
+  //Hashmap for cases in states
+  //enter states
+  StateCases = new HashMap<String, Integer>();
+  for (TableRow row : userData.rows()) {
+    StateCases.put(row.getString(2), 0);
+  }
+
+  //enter cases per state
+  for (TableRow row : userData.rows()) {
+    state = row.getString(2);
+    if (StateCases.containsKey(state)) {
+      noOfCases = StateCases.get(state);
+      addNewCases = row.getInt(4);
+      noOfCases += addNewCases;
+      StateCases.put(state, noOfCases);
+    }
+  }
+
+  Cases = new int[StateCases.size()];   //cases per state
+  States = new String[StateCases.size()];   //states
+
+  //println(StateCases);
+  //States = new float[10]; //StateCases.size()
+
+  //convert states per case into int[] casesper state
+  //string[] state names
+  int i =0;
+  for (Map.Entry<String, Integer> me : StateCases.entrySet()) {
+    //for (int k = 0; k < StateCases.size(); k++) {
+    CasesNumber = me.getValue();
+    //println(CasesNumber);
+    Cases[i] = CasesNumber;
+    StateNames = me.getKey();
+    States[i] = StateNames;
+    //println(StateNames);
+    i++;
+  }
+
+  //convert int[] cases per state into float[] to be used for bar chart
+  float[] floatCases = new float[StateCases.size()];
+  int index = 0;
+  for (final Integer value : Cases) {
+    floatCases[index] = value;
+    index++;
+  }
+
+  // Hashmap for cases in an area
+  AreaCases = new HashMap<String, Integer>();
+
+  // test hashmap for specific area
+  for (TableRow row : userData.rows()) {
+    //StateCases.put(row.getString(2), 0);
+    if (row.getString(2).equals("Texas")) { //mousePressedonIdOfstate // 
+      AreaCases.put(row.getString(1), 0);
+    }
+  }
+
+  //inserts the number of cases per area into hashMap
+  for (TableRow row : userData.rows()) {
+    areas = row.getString(1);
+    if (AreaCases.containsKey(areas)) {
+      numberOfCases = AreaCases.get(areas);
+      addMoreCases = row.getInt(4);
+      numberOfCases += addMoreCases;
+      AreaCases.put(areas, numberOfCases);
+    }
+  }
+  println(AreaCases);
+
+  //int[] cases in an area
+  CasesInAreas = new int[AreaCases.size()];   // cases in area
+
+  /*
+  int index2 = 0;
+   for (Map.Entry<String, Integer> me2 : AreaCases.entrySet()) {
+   theCasesInAreas = me2.getValue();
+   CasesInAreas[index2] = theCasesInAreas;
+   index2++;
+   }
+   */
+
+  int index2 = 0;
+  for (Map.Entry<String, Integer> me2 : AreaCases.entrySet()) {
+    theCasesInAreas = me2.getValue();
+    CasesInAreas[index2++] = theCasesInAreas;
+    //index2++;
+  }
+  println(CasesInAreas);
+
+  println(StateCases);
+  //println(AreaCases);
+  //println(floatCases);
+  //println(Cases); 
+  //println(States);
+
+  //create bar chart
+  StatesXCases = new BarChart(this);
+  StatesXCases.setData(floatCases);
+
+  // max for barchart
+  int max = Cases[0];
+  for (int index3 = 0; index3 < Cases.length; index3++) {
+    if (Cases[index3] > max) {
+      max = Cases[index3];
+    }
+  }
+
+  //min for barchart
+  int min = Cases[0];
+  for (int index4 = 0; index4 < Cases.length; index4++) {
+    if (Cases[index4] < min) {
+      min = Cases[index4];
+    }
+  }
+
+  //barchart parameters
+  StatesXCases.setMinValue(min);
+  StatesXCases.setMaxValue(max);
+
+  //formatting barchart
+  textFont(createFont("Georgia", 15));
+  StatesXCases.showValueAxis(true);
+  StatesXCases.setValueFormat("#  cases");
+  StatesXCases.setBarLabels(States);
+  StatesXCases.showCategoryAxis(true);
+  StatesXCases.setBarColour(color(245, 121, 28, 180));
+
+  StatesXCases.setBarGap(0);
+
+  StatesXCases.transposeAxes(true);
+
+  //debugging geomap
+  // Display the rows of attributes in the console.
+  //geoMap.writeAttributesAsTable(51);
+
+  //line chart
+  //line plot must have number values for both axis'
+  //SXCVector = new PVector();
+  //SXCLineChart = new XYChart(this);
+  //SXCLineChart.setData(Cases, States);
+
+  //initialzing row data
+  for (int j = 0; j < userData.getRowCount(); j++) 
+  {
+    row = userData.getRow(i);
+    aDataRow = new DataRow(row);
+    theDataRows.add(aDataRow);
+  }
+}
+
+void draw()
+{ 
+  background(ocean);
+  //setScreen();
+  //currentScreen.draw();
+  //stroke(0, 40);               // Boundary colour
+  fill(6, 208, 83);          // Land colour
+  geoMap.draw();              // Draw map.
+  // Find the country at mouse position and draw in different colour.
+  stateId = geoMap.getID(mouseX, mouseY);
+  //state name display
+  if (stateId != -1)
+  {
+    fill(8, 84, 27);      // Highlighted land colour.
+    geoMap.draw(stateId);
+    stateName = geoMap.getAttributeTable().findRow(str(stateId), 0).getString("State_Name");    
+    fill(0);
+    text(stateName, mouseX, mouseY);
+  }
+
+  //barchart using library
+  textSize(16);
+  //StatesXCases.draw(5, 5, 900, 2000);
+
+
+  //bar chart using rectangles
+  /*
+  for (int i = 0; i < Cases.length; i++) {
+   fill(180, 25, 69);
+   handWritten.rect(0, i*19, Cases[i], 20);
+   textSize(12);
+   fill(0);
+   text(States[i], 250, i*19 + 20);
+   text(str(Cases[i]), 200, i*19 + 20);
+   textSize(50);
+   text("Number of cases", 480, 620);
+   text("by State", 500, 680);
+   }
+   //noLoop(); // handwritting doesn't move
+   */
+  //piechart
+  //stroke(255);
+  //pieChart(250, CasesInAreas);
+  mousePressed();
+}
+
+//piechart making
+void pieChart(float diameter, int[] data) {
+  float lastAngle = 0;
+  float sumOfData = 0;
+  float addData;
+  //find sum of data
+  for (int i = 0; i < data.length; i++) {
+    addData = data[i];
+    sumOfData += addData;
+  }
+  //convert data to angles
+  float[] angles = new float[data.length];
+  for (int i = 0; i < data.length; i++) {
+    angles[i] = ((data[i] / sumOfData) * 360);
+  }
+
+  for (int i = 0; i < angles.length; i++) {
+    float gray = map(i, 0, data.length, 0, 255);
+    fill(gray);
+    arc(width/2, height/2, diameter, diameter, lastAngle, lastAngle+radians(angles[i]));
+    lastAngle += radians(angles[i]);
+  }
+}
+
+void mouseWheel(MouseEvent event) { 
+  f = event.getCount();
+  /*if ( f>0) {
+   P++;
+   } 
+   if ( f<0) {
+   P--;
+   }
+   if (P<=0) { 
+   f=0;
+   }
+   */
+}
+
+void move() {
+  y-=f*20;
+}
+
+void mousePressed() {
+  if (mousePressed) {
+    background(255);
+   textSize(50);
+   fill(255, 0, 0);
+   text("Cases in Texas by area", width/4, 80); //replace with whatever state pressed
+   // replace with areas in that state 
+   //loop through string[] areas for that state
+   text("Bexar", 100, 500);
+   text("Collin", width * 0.76, 390);
+   text("Fort Bend", width * 0.75, 300);
+   text("Harris", width *0.7, 150);
+   pieChart(500, CasesInAreas);
+   
+  }
+}
+
+void bubbleMap() {
+  
+}
+/*
+void setScreen() {
+ if (firstScreen) {
+ currentScreen = screens[0];
+ } else {
+ currentScreen = screens[1];
+ }
+ }
+ 
+ void mousePressed() {
+ ArrayList<Widget> widgetList = currentScreen.widgetList;
+ int event;
+ for (int i = 0; i < widgetList.size(); i++) {
+ Widget aWidget = widgetList.get(i);
+ event = aWidget.getEvent(mouseX, mouseY);
+ switch(event) {
+ case EVENT_BUTTON1:
+ println(aWidget.label + '!');
+ break;
+ case EVENT_BUTTON2:
+ firstScreen = !firstScreen;
+ println(aWidget.label + '!');
+ break;
+ default:
+ }
+ }
+ }
+ 
+ 
+ void mouseMoved() {
+ ArrayList<Widget> widgetList = currentScreen.widgetList;
+ int event;
+ for (int i = 0; i < widgetList.size(); i++) {
+ Widget aWidget = widgetList.get(i);
+ event = aWidget.getEvent(mouseX, mouseY);
+ switch(event) {
+ case EVENT_BUTTON1:
+ case EVENT_BUTTON2:
+ case EVENT_BUTTON3:
+ aWidget.setBorderColorWhite();
+ break;
+ case EVENT_NULL:
+ aWidget.setBorderColor(0);
+ break;
+ }
+ }
+ }
+ */

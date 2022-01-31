@@ -1,0 +1,16 @@
+class heatMap {
+
+  int screen;
+  ArrayList widgetList;
+
+
+  heatMap(int screen) {
+    this.screen = screen;
+  }
+  void settings() {
+    size(SCREEN_X, SCREEN_Y);
+  }
+  void draw() {
+    background(51);
+  }
+}

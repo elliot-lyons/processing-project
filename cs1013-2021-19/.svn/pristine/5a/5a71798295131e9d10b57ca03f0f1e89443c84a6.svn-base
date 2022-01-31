@@ -1,0 +1,48 @@
+import java.util.Map;
+
+class StatesData {
+  Table userData;
+  TableRow row;
+
+  DataRow aDataRow;
+  ArrayList theDataRows;
+
+  String date;
+  String area;
+  String state;
+  String geoId;
+  int cases;
+  String country;
+
+  int noOfCases;
+  int addNewCases;
+
+  HashMap<String, Integer> StateCases;
+
+  //  StatesData() {  // constructor
+  //StateCases = new HashMap<String, Integer>();
+  //  }
+
+
+  //void setStates(HashMap<String, Integer> StateCases) {
+  //set states
+  //StatesData() {
+    
+
+    
+  //}
+
+  //void setCasesPerState(HashMap<String, Integer> StateCases) {
+  //set case number
+  //void CasesData() {
+
+    //println(StateCases);
+  //  noLoop();
+  //}
+
+  void draw() {
+    //for (Map.Entry me : StateCases.entrySet()) {
+    //println("Key: " + me.getKey() + ", Value: " + me.getValue() );
+    println(StateCases);
+  }
+}

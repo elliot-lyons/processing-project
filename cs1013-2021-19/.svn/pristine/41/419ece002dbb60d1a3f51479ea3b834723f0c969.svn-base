@@ -1,0 +1,126 @@
+class homeScreen {
+  int screen;
+  ArrayList widgetList;
+  color strokeColour;
+
+  PImage blankusImage;
+
+  Widget Daily, Monthly, Yearly, States;
+  PFont widgetFont;
+
+  homeScreen(int screen)
+  { 
+    this.screen = screen;
+    strokeColour = color(0, 0, 255);
+    widgetFont = loadFont("AgencyFont.vlw");
+    blankusImage = loadImage("MutlicolouredUSMap.png");
+
+    textFont(widgetFont);
+    widgetList = new ArrayList();
+    Daily = new Widget (1250, 350, 280, 80, "Daily statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON1);
+    Monthly = new Widget (1250, 450, 280, 80, "Monthly Statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON2);
+    Yearly = new Widget (1250, 550, 280, 80, "Yearly Statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON3);
+    States = new Widget (1250, 650, 280, 80, "State Statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON4);
+    widgetList.add(Daily);
+    widgetList.add(Monthly);
+    widgetList.add(Yearly);
+    widgetList.add(States);
+  }
+
+
+  void settings() {
+    size(SCREEN_X, SCREEN_Y);
+  }
+
+  void draw() {
+    // background(95, 0, 0);
+    //blankusImage.resize(938, 593);
+    // image(blankusImage, 50, 300);
+    background(202, 226, 245);  // Ocean colour
+    stroke(0, 40);               // Boundary colour
+    fill(206, 173, 146);          // Land colour
+    geoMap.draw();              // Draw map.
+    // Find the country at mouse position and draw in different colour.
+    stateId = geoMap.getID(mouseX, mouseY);
+    if (stateId != -1)
+    {
+      fill(180, 120, 120);      // Highlighted land colour.
+      geoMap.draw(stateId);
+      stateName = geoMap.getAttributeTable().findRow(str(stateId), 0).getString("State_Name");    
+      fill(0);
+      text(stateName, mouseX, mouseY);
+    }
+    
+    strokeWeight(5);
+    Daily.draw();
+    Monthly.draw();
+    Yearly.draw();
+    States.draw();
+  }
+  void whenMouseMoved(int x, int y) {
+    int event;
+    for (int i = 0; i < widgetList.size(); i++) {
+      Widget theWidget = (Widget) widgetList.get(i);
+      event = theWidget.getEvent(x, y);
+      switch(event) {
+      case EVENT_BUTTON1:
+      case EVENT_BUTTON2:
+      case EVENT_BUTTON3:
+      case EVENT_BUTTON4:
+        theWidget.strokeColor=(color(0, 0, 100));
+        println("hover");
+        break;
+      case EVENT_NULL:
+        theWidget.strokeColor=(color(0));
+        break;
+      }
+    }
+  }
+
+  void whenMousePressed() {
+    int event;
+    if (currentScreen == HOME_SCREEN)
+    {
+      for (int i = 0; i < widgetList.size(); i++)
+      {
+        Widget aWidget = (Widget) widgetList.get(i);
+        event = aWidget.getEvent(mouseX, mouseY);
+        if (event == EVENT_BUTTON1)
+        {
+          println("Home daily pressed");
+        } else if (event != EVENT_BUTTON1)
+        {
+          event = aWidget.getEvent(mouseX, mouseY);
+          if (event == EVENT_BUTTON2)
+          {
+            println("Home monthly pressed");
+            currentScreen = MONTH_SCREEN;
+          }
+        }
+      }
+    } else if (currentScreen == 2)
+    {
+      for (int i = 0; i < widgetList.size(); i++)
+      {
+        Widget aWidget = (Widget) widgetList.get(i);
+        event = aWidget.getEvent(mouseX, mouseY);
+        if (event == EVENT_BUTTON1)
+        {
+          println("Screen2 button1 pressed");
+        } else if (event != EVENT_BUTTON1)
+        {
+          event = aWidget.getEvent(mouseX, mouseY);
+          if (event == EVENT_BUTTON2)
+          {
+            println("Screen2 button2 pressed");
+            currentScreen = MONTH_SCREEN;
+          }
+        }
+      }
+    }
+  }
+}

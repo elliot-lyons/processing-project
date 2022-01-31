@@ -1,0 +1,92 @@
+class DateGraph
+{
+  private double xRatio;
+  private int screen;
+
+  ArrayList theList;
+  covidDataRow currentRow;
+
+  GraphBar graphBar;
+  GraphBar[] graphBarList;
+  MaxHeightCalculator maxHeight;
+  DrawBars drawBars;
+
+  DateGraph(ArrayList<covidDataRow> aList, int screen)
+  { 
+    theList = aList;
+    this.screen = screen;
+    graphBarList = new GraphBar[TOTAL_MONTHS];                                                                 // this goes here solely for debugging reasons. When the program becomes bigger,
+    // it'll be inide a switch statement
+    if (screen == MONTH_SCREEN)
+    {
+      xRatio = (double) GRAPH_X / (double) TOTAL_MONTHS;                                                       // this determines the spacing on the x-axis for the month labels
+    }
+
+    initArray(graphBarList);
+    maxHeight = new MaxHeightCalculator(graphBarList);
+    drawBars = new DrawBars(graphBarList, maxHeight);
+  }
+
+  void draw()
+  {
+    line(LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN, LEFT_GRAPH_X_ORIGIN + GRAPH_X, GRAPH_Y_ORIGIN);                  // this draws the x-axis
+    stroke(100);
+
+    line(LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN, LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN - GRAPH_Y);                  // this draws the y-axis
+    stroke(100);
+
+    if (screen == MONTH_SCREEN)
+    {
+      createAxes(allMonths, xRatio, maxHeight);                                                                // this adds the appropriate labels to the axes
+    }
+    drawBars.drawTheBars();                                                                                    // this draws the bars onto the graph
+  }
+
+
+  void createAxes(String[] anArray, double xRatio, MaxHeightCalculator max)
+  {
+    double xRat = xRatio;
+
+    for (int i = 0; i < anArray.length; i++)
+    {
+      String currentString = "" + anArray[i];
+      text(currentString, (float) (LEFT_GRAPH_X_ORIGIN + (i * xRat) + (xRat / 4)),                             // this outputs each month onto the screen and puts it into the correct position
+        (float) (GRAPH_Y_ORIGIN + GRAPH_X_TEXT_MARGIN));                                                       // onto the x-axis as a label 
+
+      line((float) (LEFT_GRAPH_X_ORIGIN +(xRat * (i + 1))), (float) GRAPH_Y_ORIGIN,                            // this adds a little vertical line divider between the x-axis labels 
+        (float) (LEFT_GRAPH_X_ORIGIN +(xRat * (i + 1))), (float) GRAPH_Y_ORIGIN - DIVIDER_LINE);
+    }
+
+    double theMaxCases = max.maxCases();
+    
+    text((int) theMaxCases, (float) LEFT_GRAPH_X_ORIGIN - GRAPH_Y_TEXT_MARGIN, (float) GRAPH_Y_ORIGIN - GRAPH_Y);      // this prints the number of the heighest cases at the top of the y-axis
+    line((float) LEFT_GRAPH_X_ORIGIN, (float) (GRAPH_Y_ORIGIN - GRAPH_Y), 
+        (float) LEFT_GRAPH_X_ORIGIN + DIVIDER_LINE, (float) (GRAPH_Y_ORIGIN - GRAPH_Y));                               // this adds a little horizontal divider line to the top of the y-axis
+
+    for (int i = 0; i < theMaxCases; i = i + 100000000)                                                                // this loop labels the y-axis in intervals of 100,000,000 cases
+    {                                                                                                                  // it also puts a little horizontal divider at those intervals
+      text(i, (float) (i == 0 ? LEFT_GRAPH_X_ORIGIN - 10 : LEFT_GRAPH_X_ORIGIN - GRAPH_Y_TEXT_MARGIN), 
+        (float) (GRAPH_Y_ORIGIN - (i * (GRAPH_Y / max.theMaxCases))) + DIVIDER_LINE);
+
+      line((float) LEFT_GRAPH_X_ORIGIN, (float) (GRAPH_Y_ORIGIN - (i * (GRAPH_Y / max.theMaxCases))), 
+        (float) LEFT_GRAPH_X_ORIGIN + DIVIDER_LINE, (float) (GRAPH_Y_ORIGIN - (i * (GRAPH_Y / max.theMaxCases))));
+    }
+  }
+
+  void initArray(GraphBar[] theBars)                                                                              // this creates an array, of type GraphBar, of graph bars
+  {
+    for (int i = 0; i < theBars.length; i++)
+    {
+      theBars[i] = new GraphBar(allMonths[i], xRatio, (i * 10), (float) (LEFT_GRAPH_X_ORIGIN + (i * xRatio)), (float) GRAPH_Y_ORIGIN, theList);
+      println((LEFT_GRAPH_X_ORIGIN + (i * xRatio)));
+    }
+  }
+
+  //void drawArray(GraphBar[] theBars)
+  //{
+  //  for (int i = 0; i < theBars.length; i++)
+  //  {
+  //    theBars[i].draw();
+  //  }
+  //}
+}

@@ -1,0 +1,132 @@
+class AboutUs {
+
+  int screen;
+  ArrayList widgetList;
+  boolean backMp = false;
+
+  Widget Title, Name, Course, Email, Group, Ali, Ana, Elliot, Wicky, CSB, CSB1, CSB2, CSB3, AliEmail, AnaEmail, ElliotEmail, WickyEmail, group19,group191, group192,group193;
+
+  PFont widgetFont;
+
+  AboutUs (int screen) {
+    this.screen = screen;
+
+    widgetFont = loadFont("AgencyFont.vlw");
+    textFont(widgetFont);
+
+    widgetList = new ArrayList();
+
+    Title = new Widget (550, 10, 725, 120, "Who are we?", 
+      color (255, 255, 255), widgetFont, TITLE);
+    Name = new Widget (85, 200, 350, 60, "Name:", 
+      color (255, 255, 255), widgetFont, TITLE);
+    Course = new Widget (515, 200, 350, 60, "Course:", 
+      color (255, 255, 255), widgetFont, TITLE);
+    Email = new Widget (945, 200, 350, 60, "Email:", 
+      color (255, 255, 255), widgetFont, TITLE);
+    Group = new Widget (1375, 200, 350, 60, "Group:", 
+      color (255, 255, 255), widgetFont, TITLE);  
+
+
+    Ali = new Widget (85, 355, 350, 60, "Ali Al Ani", 
+      color (255, 255, 255), widgetFont, TITLE);  
+    Ana = new Widget (85, 455, 350, 120, "Anastasiya" + "\n" + "Bogoslovskaya", 
+      color (255, 255, 255), widgetFont, TITLE);  
+    Elliot = new Widget (85, 625, 350, 60, "Elliot Lyons", 
+      color (255, 255, 255), widgetFont, TITLE);  
+    Wicky = new Widget (85, 760, 350, 60, "Wiktoria Fabijaniak", 
+      color (255, 255, 255), widgetFont, TITLE);  
+
+
+    CSB = new Widget (515, 320, 350, 120, "Computer Science" + "\n" + "Business", 
+      color (255, 255, 255), widgetFont, TITLE);  
+    CSB1 = new Widget (515, 455, 350, 120, "Computer Science" + "\n" + "Business", 
+      color (255, 255, 255), widgetFont, TITLE);  
+    CSB2 = new Widget (515, 590, 350, 120, "Computer Science" + "\n" + "Business", 
+      color (255, 255, 255), widgetFont, TITLE);  
+    CSB3 = new Widget (515, 725, 350, 120, "Computer Science" + "\n" + "Business", 
+      color (255, 255, 255), widgetFont, TITLE);  
+
+    AliEmail = new Widget (945, 355, 350, 60, "alania@tcd.ie", 
+      color (255, 255, 255), widgetFont, TITLE);  
+    AnaEmail = new Widget (945, 490, 350, 60, "bogosloa@tcd.ie", 
+      color (255, 255, 255), widgetFont, TITLE); 
+    ElliotEmail = new Widget (945, 625, 350, 60, "lyonse7@tcd.ie", 
+      color (255, 255, 255), widgetFont, TITLE);  
+    WickyEmail = new Widget (945, 760, 350, 60, "fabijanw@tcd.ie", 
+      color (255, 255, 255), widgetFont, TITLE);  
+
+    group19 = new Widget (1375, 355, 350, 60, "19", 
+      color (255, 255, 255), widgetFont, TITLE);  
+    group191 = new Widget (1375, 490, 350, 60, "19", 
+      color (255, 255, 255), widgetFont, TITLE); 
+    group192 = new Widget (1375, 625, 350, 60, "19", 
+      color (255, 255, 255), widgetFont, TITLE);  
+    group193 = new Widget (1375, 760, 350, 60, "19", 
+      color (255, 255, 255), widgetFont, TITLE);  
+
+
+
+
+    backMp = false;
+  }
+
+  void settings() {
+    size(SCREEN_X, SCREEN_Y);
+  }
+
+  void draw() {
+    image(template, 1, 1);                                 
+    template.resize(1800, 900);      //Background
+    Title.draw();
+    Name.draw();
+    Course.draw();
+    Email.draw();
+    Group.draw();
+    Ali.draw();
+    Elliot.draw();
+    Ana.draw();
+    Wicky.draw();
+    CSB.draw();
+    CSB1.draw();
+    CSB2.draw();
+    CSB3.draw();
+    AliEmail.draw();
+    AnaEmail.draw();
+    ElliotEmail.draw();
+    WickyEmail.draw();
+    group19.draw();
+    group191.draw();
+    group192.draw();
+    group193.draw();
+    backButton(mouseX, mouseY);
+    backMp = false;
+  }
+  void backButton(int mX, int mY)                                        // this is a back button which lets the user return to the previous screen
+  {
+    if (mX >= BACK_BUTTON_X_ORG && mX <= BACK_BUTTON_X_ORG + BACK_BUTTON_X && mY >= BACK_BUTTON_Y_ORG && mY <= BACK_BUTTON_Y_ORG + BACK_BUTTON_Y) 
+    {
+      stroke(255);
+
+      if (backMp)
+      {  
+        backMp = false;
+        currentScreen = HOME_SCREEN;
+      }
+    } else
+    {
+      stroke(0);
+    }
+
+    fill(grey);
+    rect(BACK_BUTTON_X_ORG, BACK_BUTTON_Y_ORG, BACK_BUTTON_X, BACK_BUTTON_Y);
+
+    fill(0);
+    textFont(ArialBoldItalicMtTwenty);
+    textAlign(CENTER, CENTER);
+    text("Back", BACK_BUTTON_X_ORG, BACK_BUTTON_Y_ORG, BACK_BUTTON_X, BACK_BUTTON_Y);
+    textAlign(LEFT, BOTTOM);
+    stroke(0);
+    //text("Back", BACK_BUTTON_ORG + 5, BACK_BUTTON_ORG + 20);
+  }
+}

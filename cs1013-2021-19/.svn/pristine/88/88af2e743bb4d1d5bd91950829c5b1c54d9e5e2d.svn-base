@@ -1,0 +1,99 @@
+Table covidData;
+TableRow covidRow;
+
+PImage blankUSMap;
+PFont ArialMtTwelve;
+
+ArrayList totalList;
+covidDataRow dataRow;
+String[] allMonths;
+
+String inFile;
+public static int currentScreen;
+
+DateGraph aDateGraph;
+homeScreen theHomeScreen;
+ArrayList widgetList;
+
+
+void settings()
+{
+  size(SCREEN_X, SCREEN_Y);
+}
+
+void setup()
+{
+  inFile = "cases1m.csv";
+  covidData = loadTable(inFile, "header");
+  totalList = new ArrayList();
+  
+  ArialMtTwelve = loadFont("ArialMT-12.vlw");
+  textFont(ArialMtTwelve);
+  
+  blankUSMap = loadImage("BlankUSMap.png");
+  currentScreen = HOME_SCREEN;
+  
+  allMonths = new String[TOTAL_MONTHS];
+  fillMonths(allMonths);
+  
+  for (int i = 0; i < covidData.getRowCount(); i++) 
+  {
+    covidRow = covidData.getRow(i);
+    
+    dataRow = new covidDataRow(covidRow);
+    totalList.add(dataRow);
+  }
+  
+  theHomeScreen = new homeScreen(currentScreen);
+}
+
+void draw()
+{
+  switch(currentScreen) {
+    case HOME_SCREEN:
+      theHomeScreen.draw();
+      break;
+    case MONTH_SCREEN:
+      aDateGraph = new DateGraph(totalList, currentScreen);
+      aDateGraph.draw();
+      break;
+  }
+  println(currentScreen);
+}
+
+void mousePressed() {
+  if(currentScreen == MONTH_SCREEN)
+  {
+    aDateGraph.checkBarPress();
+  }
+  theHomeScreen.whenMousePressed();
+}
+void mouseMoved() {
+  theHomeScreen.whenMouseMoved(mouseX, mouseY);
+}
+
+void fillMonths(String[] months)
+{
+  int yearsRequired = months.length / 12;
+  
+  if (months.length % 12 > 0)
+  {
+    yearsRequired++;                                                                                                  // this adds another year on if there are extra months
+  }
+  
+  int currentYear = START_YEAR;
+  yearsRequired += currentYear;
+  int i = 0;
+  
+  while (currentYear < yearsRequired)                                                                                
+  {
+    for (int currentMonth = 1; currentMonth <= 12 && i < months.length; currentMonth++)
+    {
+      String selectedMonth = "" + (currentMonth < 10 ? "0" + currentMonth: + currentMonth) + "/" + currentYear;
+      months[i] = selectedMonth;                                                                                      // this stores the month in the allMonth String in the format
+      i++;                                                                                                            // MM/YY
+    }
+    currentYear++;                                                                                                    // the for loop concludes when all the months have been done for one year
+  }                                                                                                                   // the while loop concludes when all the years have been covered
+}
+  

@@ -1,0 +1,2 @@
+final int SCREEN_X = 750;
+final int SCREEN_Y = 500;

@@ -1,0 +1,130 @@
+class homeScreen {
+  int screen;
+  ArrayList widgetList;
+  color strokeColour;
+
+  PImage libertyStatue, covid19HSE, blankUSMAP; 
+
+
+  Widget Charity, Monthly, Yearly, States, Welcome, Heatmap;
+  PFont widgetFont;
+
+  homeScreen(int screen)
+  { 
+    this.screen = screen;
+    strokeColour = color(0, 0, 255);
+    widgetFont = loadFont("AgencyFont.vlw");
+    textFont(widgetFont);
+
+    libertyStatue = loadImage("LibertyStatue.jpg");         // Simple image loading
+    covid19HSE = loadImage("CovidHSE.jpg");
+    blankUSMAP = loadImage("MutlicolouredUSMap.png");
+
+    widgetList = new ArrayList();
+    Charity = new Widget (750, 100, 125, 60, "Charity",               //Widget position, info and colour
+      color (40, 255, 40), widgetFont, EVENT_BUTTON1);
+    Monthly = new Widget (1300, 430, 280, 70, "Monthly Statistics", 
+      color (255, 255, 100), widgetFont, EVENT_BUTTON2);
+    Yearly = new Widget (1300, 510, 280, 70, "Yearly Statistics", 
+      color (255, 255, 100), widgetFont, EVENT_BUTTON3);
+    States = new Widget (1300, 590, 280, 70, "State Statistics", 
+      color (255, 255, 100), widgetFont, EVENT_BUTTON4);
+    Heatmap = new Widget (1300, 670, 280, 70, "Heat Map", 
+      color (255, 255, 100), widgetFont, EVENT_BUTTON5);
+    Welcome = new Widget (450, 15, 725, 60, "Welcome to the US Covid-19 Data and Statistics", 
+      color (255, 255, 255), widgetFont, EVENT_BUTTON6);
+
+    widgetList.add(Welcome);
+    widgetList.add(Charity);
+
+    widgetList.add(Monthly);
+    widgetList.add(Yearly);
+    widgetList.add(States);
+    widgetList.add(Heatmap);
+  }
+
+  void settings() {
+    size(SCREEN_X, SCREEN_Y);
+  }
+
+  void draw() {
+                                  
+    image(libertyStatue, 1, 1);                                 
+    libertyStatue.resize(1600, 1200);      //Background
+
+    image(covid19HSE, 1088, 944);          //Bottom right image
+    covid19HSE.resize(512, 256);
+
+    strokeWeight(4);
+    Welcome.draw();
+    Charity.draw();
+    Monthly.draw();
+    Yearly.draw();
+    States.draw();
+    Heatmap.draw();
+  }
+
+  void whenMouseMoved(int x, int y) {                        //Mouse hovering over buttons for widget highlight
+    int event;
+    for (int i = 0; i < widgetList.size(); i++) {
+      Widget theWidget = (Widget) widgetList.get(i);
+      event = theWidget.getEvent(x, y);
+      switch(event) {
+      case EVENT_BUTTON1:
+      case EVENT_BUTTON2:
+      case EVENT_BUTTON3:
+      case EVENT_BUTTON4:
+      case EVENT_BUTTON5:
+        theWidget.strokeColor=(color(255));
+        println("hover");
+        break;
+      case EVENT_NULL:
+        theWidget.strokeColor=(color(0));
+        break;
+      }
+    }
+  }
+
+  void whenMousePressed() {
+    int event;
+    if (currentScreen == HOME_SCREEN)
+    {
+      for (int i = 0; i < widgetList.size(); i++)
+      {
+        Widget aWidget = (Widget) widgetList.get(i);
+        event = aWidget.getEvent(mouseX, mouseY);
+        if (event == EVENT_BUTTON1)
+        {
+          println("Home daily pressed");
+        } else if (event != EVENT_BUTTON1)
+        {
+          event = aWidget.getEvent(mouseX, mouseY);
+          if (event == EVENT_BUTTON2)
+          {
+            println("Home monthly pressed");
+            currentScreen = MONTH_SCREEN;
+          }
+        }
+      }
+    } else if (currentScreen == 2)
+    {
+      for (int i = 0; i < widgetList.size(); i++)
+      {
+        Widget aWidget = (Widget) widgetList.get(i);
+        event = aWidget.getEvent(mouseX, mouseY);
+        if (event == EVENT_BUTTON1)
+        {
+          println("Screen2 button1 pressed");
+        } else if (event != EVENT_BUTTON1)
+        {
+          event = aWidget.getEvent(mouseX, mouseY);
+          if (event == EVENT_BUTTON2)
+          {
+            println("Screen2 button2 pressed");
+            currentScreen = MONTH_SCREEN;
+          }
+        }
+      }
+    }
+  }
+}

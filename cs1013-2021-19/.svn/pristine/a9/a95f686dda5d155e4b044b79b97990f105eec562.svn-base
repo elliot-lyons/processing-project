@@ -1,0 +1,14 @@
+final int SCREEN_X = 1600;
+final int SCREEN_Y = 1200;
+
+final int GRAPH_X = 500;
+final int GRAPH_Y = 500;
+final int LEFT_GRAPH_X_ORIGIN = 100;
+final int GRAPH_Y_ORIGIN = 600;
+final int RIGHT_GRAPH_X_ORIGIN = 1100;
+
+final int HOME_SCREEN = 1;
+final int MONTH_SCREEN = 2;
+final int DAILY_SCREEN = 3;
+final int STATE_SCREEN = 4;
+final int COUNTY_SCREEN = 5;

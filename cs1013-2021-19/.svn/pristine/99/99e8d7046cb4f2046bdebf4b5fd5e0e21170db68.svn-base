@@ -1,0 +1,102 @@
+class DateBreakdown                                          // this is a breakdown of the amount of cases on a specific day
+{
+  String date;
+  ArrayList<covidDataRow> theList;
+  ArrayList<String> allStates;
+  String first;
+  String second;
+  String third;
+  int firstCases;
+  int secondCases;
+  int thirdCases;
+
+  DateBreakdown(ArrayList<covidDataRow> theList, String date, ArrayList<String> allStates)
+  {
+    this.date = date;
+    this.theList = theList;
+    this.allStates = allStates;
+
+    first = "";
+    second = "";
+    third = "";
+    firstCases = 0;
+    secondCases = 0;
+    thirdCases = 0;
+    
+    rankings();
+  }
+
+  void rankings()                                                                        // this goes through each state and figures out the states with the top 3 highest cases on that day
+  {
+    covidDataRow currentRow;
+    int currentCases = 0;
+
+    for (int i = 0; i < allStates.size(); i++)
+    {
+      for (int j = 0; j < theList.size(); j++)
+      {
+        currentRow = theList.get(j);
+
+        if (allStates.get(i).equals(currentRow.state) && currentRow.date.equals(date))
+        {
+          currentCases += currentRow.cases;
+        }
+      }
+      
+      if (currentCases >= firstCases)
+      {
+        secondCases = firstCases;
+        firstCases = currentCases;
+        second = first;
+        first = allStates.get(i);
+      } 
+      
+      else if (currentCases >= secondCases)
+      {
+        thirdCases = secondCases;
+        secondCases = currentCases;
+        third = second;
+        second = allStates.get(i);
+      } 
+      
+      else if (currentCases >= thirdCases)
+      {
+        thirdCases = currentCases;
+        third = allStates.get(i);
+      }
+      
+      currentCases = 0;
+    }
+  }
+  
+  void draw()
+  {
+      background(255);
+      
+      fill(0);
+      textFont(ArialBoldItalicMtTwenty);
+      text("The state with the highest number of cases on", 50, 100);
+      text(date, 500, 100);
+      text("was", 610, 100);
+      text(first, 675, 100);
+      text("with", 775, 100);
+      text(firstCases, 825, 100);
+      text("cases", 920, 100);
+      
+      text("The state with the highest number of cases on", 50, 200);
+      text(date, 500, 200);
+      text("was", 610, 200);
+      text(second, 675, 200);
+      text("with", 775, 200);
+      text(secondCases, 825, 200);
+      text("cases", 920, 200);
+      
+      text("The state with the highest number of cases on", 50, 300);
+      text(date, 500, 300);
+      text("was", 610, 300);
+      text(third, 675, 300);
+      text("with", 775, 300);
+      text(thirdCases, 825, 300);
+      text("cases", 920, 300);
+  }
+}

@@ -1,0 +1,120 @@
+class homeScreen {
+  int screen;
+  ArrayList widgetList;
+  color strokeColour;
+
+  PImage blankusImage;
+  PImage covid19HSE;
+
+  Widget Daily, Monthly, Yearly, States, Welcome;
+  PFont widgetFont;
+
+  homeScreen(int screen)
+  { 
+    this.screen = screen;
+    strokeColour = color(0, 0, 255);
+    widgetFont = loadFont("AgencyFont.vlw");
+    blankusImage = loadImage("MutlicolouredUSMap.png");
+    covid19HSE = loadImage("CovidHSE.jpg");
+
+    textFont(widgetFont);
+    widgetList = new ArrayList();
+    Daily = new Widget (1250, 350, 280, 80, "Daily statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON1);
+    Monthly = new Widget (1250, 450, 280, 80, "Monthly Statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON2);
+    Yearly = new Widget (1250, 550, 280, 80, "Yearly Statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON3);
+    States = new Widget (1250, 650, 280, 80, "State Statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON4);
+    Welcome = new Widget (650, 25, 280, 80, "US Covid-19 Data", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON5);
+    widgetList.add(Daily);
+    widgetList.add(Monthly);
+    widgetList.add(Yearly);
+    widgetList.add(States);
+    widgetList.add(Welcome);
+  }
+
+  void settings() {
+    size(SCREEN_X, SCREEN_Y);
+  }
+
+  void draw() {
+    background(95, 0, 0);
+    blankusImage.resize(938, 593);
+    image(blankusImage, 50, 300);
+    image(covid19HSE, 550, 1000);
+    covid19HSE.resize(512, 256);
+
+    strokeWeight(5);
+    Welcome.draw();
+    Daily.draw();
+    Monthly.draw();
+    Yearly.draw();
+    States.draw();
+  }
+  void whenMouseMoved(int x, int y) {
+    int event;
+    for (int i = 0; i < widgetList.size(); i++) {
+      Widget theWidget = (Widget) widgetList.get(i);
+      event = theWidget.getEvent(x, y);
+      switch(event) {
+      case EVENT_BUTTON1:
+      case EVENT_BUTTON2:
+      case EVENT_BUTTON3:
+      case EVENT_BUTTON4:
+      case EVENT_BUTTON5:
+        theWidget.strokeColor=(color(255, 255, 255));
+        println("hover");
+        break;
+      case EVENT_NULL:
+        theWidget.strokeColor=(color(0));
+        break;
+      }
+    }
+  }
+
+  void whenMousePressed() {
+    int event;
+    if (currentScreen == HOME_SCREEN)
+    {
+      for (int i = 0; i < widgetList.size(); i++)
+      {
+        Widget aWidget = (Widget) widgetList.get(i);
+        event = aWidget.getEvent(mouseX, mouseY);
+        if (event == EVENT_BUTTON1)
+        {
+          println("Home daily pressed");
+        } else if (event != EVENT_BUTTON1)
+        {
+          event = aWidget.getEvent(mouseX, mouseY);
+          if (event == EVENT_BUTTON2)
+          {
+            println("Home monthly pressed");
+            currentScreen = MONTH_SCREEN;
+          }
+        }
+      }
+    } else if (currentScreen == 2)
+    {
+      for (int i = 0; i < widgetList.size(); i++)
+      {
+        Widget aWidget = (Widget) widgetList.get(i);
+        event = aWidget.getEvent(mouseX, mouseY);
+        if (event == EVENT_BUTTON1)
+        {
+          println("Screen2 button1 pressed");
+        } else if (event != EVENT_BUTTON1)
+        {
+          event = aWidget.getEvent(mouseX, mouseY);
+          if (event == EVENT_BUTTON2)
+          {
+            println("Screen2 button2 pressed");
+            currentScreen = MONTH_SCREEN;
+          }
+        }
+      }
+    }
+  }
+}

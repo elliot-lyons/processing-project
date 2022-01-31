@@ -1,0 +1,134 @@
+class PieChart {
+
+  PImage mapOfStates = loadImage("BlankUSMap.png");
+  float diameter;
+  float lastAngle = 0;
+  float sumOfData = 0;
+  float addData;
+  float mouseAngle;
+  int[] data;
+  float[] angles;
+  float gray;
+  String[] labels;
+  String[] labelNames;
+  color minColor, maxColor;
+  float shadeOfGreen, shadeOfRed, shadeOfBlue;
+
+  //piechart making
+
+  PieChart(float diameter, int[] data, String[] labelNames) {//, String[] labels) {
+    this.diameter = diameter;
+    this.data = data;
+    this.labelNames = labelNames;
+    minColor = color(222, 235, 247);
+    maxColor = color(49, 130, 189);
+    //this.labels = labels;
+  }
+
+  void setup() {
+    //int[] data;
+
+    println(data);
+  }
+  /*
+  float dataTotal(int[] data) {
+   // find sum of all data
+   for (int i = 0; i < data.length; i++) {
+   addData = data[i];
+   sumOfData += addData;
+   }
+   return sumOfData;
+   }
+   */
+  void draw() {
+    background(255);
+    noTint();
+    createPieChart(400, data);
+    mapOfStates.resize(SCREEN_X, SCREEN_Y);
+    tint(255, 127);
+    image(mapOfStates, 100, 100);
+    // find sum of all data
+  }
+
+  void percentageSlices(int[] labels) {
+  }
+
+  void createPieChart(float diameter, int[] data) {
+    for (int i = 0; i < data.length; i++) {
+      //addData = data[i];
+      sumOfData += data[i];
+    }
+    //convert data to angles
+    angles = new float[data.length];
+    for (int i = 0; i < data.length; i++) {
+      angles[i] = ((data[i] / sumOfData) * 360);
+    }
+
+    //draw the piechart
+    int count = 0;
+    shadeOfRed = 255;
+    shadeOfGreen = 0;
+    shadeOfBlue = 0;
+    for (int i = 0; i < angles.length; i++) {
+      //gray = map(i, 0, data.length, 0, 255);
+      //fill(gray);
+      //2nd way to get color
+      //float change = i * (255/data.length);
+      //fill(lerpColor(minColor, maxColor, change));
+      //3rd way to get color
+      //goes from red to yellow to green
+
+      shadeOfGreen = i * (255/data.length * 2);
+      shadeOfRed = 255;
+      shadeOfBlue = 0;
+      if (shadeOfGreen >= 255) {
+        shadeOfRed = (255 - (i - data.length/2) * (255/data.length * 2));
+      }
+      fill( shadeOfRed, shadeOfGreen, shadeOfBlue);
+
+      /*
+      if (count < data.length / 3) {
+       shadeOfGreen = i * (255/data.length * 3);
+       }
+       
+       else if (count < data.length * 2 / 3 && count >= data.length / 3) {
+       shadeOfRed = (255 - (i - data.length / 3) * (255 / data.length *3));
+       }
+       else if (count < data.length && count > data.length * 2 / 3) {
+       shadeOfBlue = (i - data.length / 3 *2 ) * (255/data.length *3);
+       shadeOfGreen = (255 - (i - data.length / 3 * 2) * (255 / data.length *3));
+       }
+       count++;
+       */
+
+      fill(shadeOfRed, shadeOfGreen, shadeOfBlue);
+      arc(width/2, height/2, diameter, diameter, lastAngle, lastAngle + radians(angles[i]));
+      lastAngle += radians(angles[i]);
+      //rect(420, 20 + 30 *i, 20, 200);
+      if ( i < data.length / 2) {
+        rect(350, 50 + 30 * i, 30, 30);
+        fill(0);
+        textAlign(CENTER, CENTER);
+        text(labelNames[i], 350, 50 + 30 * i, 200, 20);
+      } else {
+        rect(1100, 50 + 30 * (i - data.length / 2), 30, 30);
+        fill(0);
+        textAlign(CENTER, CENTER);
+        text(labelNames[i], 1100, 50 + 30 * (i - data.length/ 2), 200, 20);
+      }
+      /*
+      float halfAngle = TWO_PI/10.0/3;
+       float x1=width/2 + 210* cos(TWO_PI/10.0*i+halfAngle); 
+       float y1=height/2  + 210* sin(TWO_PI/10.0*i+halfAngle);
+       textAlign(CENTER); 
+       text("Section " + i, x1, y1);
+       */
+      //key 
+      //fill(180);
+      //textAlign(CENTER, CENTER);
+      //text("slice" + i, 450, 36 + 30 * i );
+    }
+    textAlign(LEFT, BOTTOM);
+    //noLoop();
+  }
+}

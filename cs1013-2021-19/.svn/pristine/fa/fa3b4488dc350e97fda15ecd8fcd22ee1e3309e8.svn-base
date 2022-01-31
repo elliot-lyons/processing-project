@@ -1,0 +1,34 @@
+class DataRow
+{
+  TableRow row;
+  
+  String date;
+  String area;
+  String state;
+  String geoId;
+  int cases;
+  
+  DataRow(TableRow row)                                                                          // this constructs a new DataRow object, putting the relevant data in the
+  {                                                                                              // appropriate variables
+    this.row = row;
+    
+    date = row.getString(0);
+    area = row.getString(1);
+    state = row.getString(2);
+    geoId = row.getString(3);
+    cases = row.getInt(4);
+  }
+  
+  void draw()                                                                                    // this method outputs the data imported to the console and onto a screen
+  {
+    text(date, 10, 50);
+    text(area, 210, 50);
+    text(state, 410, 50);
+    text(geoId, 10, 150);
+    text(cases, 210, 150);
+    
+    println("" + date + ", " + area + ", " + state + ", " + geoId + ", " + cases);
+  }
+ 
+  
+}

@@ -1,0 +1,38 @@
+class DataRows {
+  TableRow row;
+  private String date;
+  private String area;
+  private String state;
+  private int cases;
+  private String sentence;
+  float y;
+  
+  DataRows(int i, float yVal) {
+      row = table.getRow(i);
+      // sets all variables using row
+      date = row.getString("date");
+      area = row.getString("area");
+      state = row.getString("county/state");
+      cases = row.getInt("cases");
+      y = yVal;
+      //sentence used in console and on screen
+      sentence = "On " + date + " in " + area + ", " + state + " there was " 
+             + cases + (cases == 1 ? " case." : " cases.");
+  } 
+  
+  void draw() {
+    fill(0);
+    // to display on screen
+    text(sentence, 20, y);
+  }
+  
+  void printRows() {
+    //to print in console
+    println(sentence);
+  }
+  
+  void move() {
+    y-=f*20;
+  }
+  
+}

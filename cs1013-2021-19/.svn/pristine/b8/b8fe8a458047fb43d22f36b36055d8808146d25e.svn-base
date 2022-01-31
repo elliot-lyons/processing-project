@@ -1,0 +1,62 @@
+class DateGraph
+{
+  private double xRatio;
+  private double yRatio;
+  private int screen;
+  private int currentCases;
+  private int maxCases;
+  ArrayList theList;
+  covidDataRow currentRow;
+
+  DateGraph(ArrayList<covidDataRow> aList, int screen)
+  { 
+    theList = aList;
+    this.screen = screen;
+  }
+
+  void draw()
+  {
+    line(LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN, LEFT_GRAPH_X_ORIGIN + GRAPH_X, GRAPH_Y_ORIGIN);                    // this draws the x-axis
+    stroke(100);
+
+    line(LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN, LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN - GRAPH_Y);                    // this draws the y-axis
+    stroke(100);
+  }
+
+  void createBars()
+  {
+    if (screen == MONTH_SCREEN)
+    {
+      xRatio = GRAPH_X / TOTAL_MONTHS;                                                                          // this determines the spacing on the x-axis for the month labels
+      yRatio = GRAPH_Y / ONE_THOUSAND_MAX_CASES;                                                                // this determines how many pixels one case will be on the y-axis 
+      // ONE_THOUSAND_MAX_CASES is a debugging variable, see Constants tab
+
+      for (int i = 0; i < allMonths.length; i++)
+      {
+        String currentMonth = "" + allMonths[i];
+        text(currentMonth, (float) (LEFT_GRAPH_X_ORIGIN + (i * xRatio) + (xRatio / 4)), // this outputs each month onto the screen and puts it into the correct position
+          (float) (GRAPH_Y_ORIGIN + GRAPH_X_TEXT_MARGIN));                                                     // onto the x-axis as a label 
+
+        line((float) (LEFT_GRAPH_X_ORIGIN +(xRatio * (i + 1))), (float) GRAPH_Y_ORIGIN, // this adds a little vertical line divider between the x-axis labels 
+          (float) (LEFT_GRAPH_X_ORIGIN +(xRatio * (i + 1))), (float) GRAPH_Y_ORIGIN - 5);
+        stroke(100);
+
+        currentCases = 0;
+
+        for (int j = 0; j < theList.size(); j++)
+        {
+          currentRow = (covidDataRow) totalList.get(j);
+
+          if (currentRow.date.contains(currentMonth))
+          {
+            currentCases += currentRow.cases;
+          }
+        }
+
+        fill(0);
+        rect((float) (LEFT_GRAPH_X_ORIGIN + (i * xRatio)), (float) (GRAPH_Y_ORIGIN - (currentCases * yRatio)), 
+          (float) ((i + 1) * xRatio), (float) (currentCases * yRatio));
+      }
+    }
+  }
+}

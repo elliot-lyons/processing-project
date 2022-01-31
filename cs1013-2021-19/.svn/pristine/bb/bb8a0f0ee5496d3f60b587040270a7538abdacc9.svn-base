@@ -1,0 +1,18 @@
+class StateCasesGraph {
+  
+StatesData theStatesCases;      
+HashMap<String, Integer> StateCases;
+
+float y;
+float f=0.001;
+int P=0;
+
+String[] States;
+int[] Cases;
+int CasesNumber;
+String StateNames;
+
+
+
+
+}

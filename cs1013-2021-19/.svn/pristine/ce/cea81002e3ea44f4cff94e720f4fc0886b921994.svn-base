@@ -1,0 +1,81 @@
+class DateGraph
+{
+  private double xRatio;
+  private double yRatio;
+
+  private int screen;
+  private int currentCases;
+  private int colorOne;
+
+  ArrayList theList;
+  covidDataRow currentRow;
+
+  GraphBar graphBar;
+  GraphBar[] graphBarList;
+
+  DateGraph(ArrayList<covidDataRow> aList, int screen)
+  { 
+    theList = aList;
+    this.screen = screen;
+    graphBarList = new GraphBar[TOTAL_MONTHS];
+    
+    if (screen == MONTH_SCREEN)
+    {
+      xRatio = (double) GRAPH_X / (double) TOTAL_MONTHS;                                                       // this determines the spacing on the x-axis for the month labels
+      yRatio = (double) GRAPH_Y / (double) ONE_MIL_MAX_CASES;                                                  // this determines how many pixels one case will be on the y-axis 
+    }
+    
+    initArray(graphBarList);
+  }
+
+  void draw()
+  {
+    line(LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN, LEFT_GRAPH_X_ORIGIN + GRAPH_X, GRAPH_Y_ORIGIN);                  // this draws the x-axis
+    stroke(100);
+
+    line(LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN, LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN - GRAPH_Y);                  // this draws the y-axis
+    stroke(100);
+
+    if (screen == MONTH_SCREEN)
+    {
+      createAxes(allMonths, xRatio, yRatio);
+      drawArray(graphBarList);
+    }
+      
+  }
+
+
+  void createAxes(String[] anArray, double xRatio, double yRatio)
+  {
+    double xRat = xRatio;
+    double yRat = yRatio;
+
+    for (int i = 0; i < anArray.length; i++)
+    {
+      String currentString = "" + anArray[i];
+      text(currentString, (float) (LEFT_GRAPH_X_ORIGIN + (i * xRat) + (xRat / 4)), // this outputs each month onto the screen and puts it into the correct position
+        (float) (GRAPH_Y_ORIGIN + GRAPH_X_TEXT_MARGIN));                                                         // onto the x-axis as a label 
+
+      line((float) (LEFT_GRAPH_X_ORIGIN +(xRat * (i + 1))), (float) GRAPH_Y_ORIGIN, // this adds a little vertical line divider between the x-axis labels 
+        (float) (LEFT_GRAPH_X_ORIGIN +(xRat * (i + 1))), (float) GRAPH_Y_ORIGIN - 5);
+        
+        // need to add y axis labels
+    }
+  }
+  void initArray(GraphBar[] theBars)
+  {
+    for (int i = 0; i < theBars.length; i++)
+    {
+        theBars[i] = new GraphBar(allMonths[i], xRatio, yRatio, (i * 10), (float) (LEFT_GRAPH_X_ORIGIN + (i * xRatio)), (float) GRAPH_Y_ORIGIN, theList);
+        println((LEFT_GRAPH_X_ORIGIN + (i * xRatio)));
+    }
+  }
+  
+  void drawArray(GraphBar[] theBars)
+  {
+    for (int i = 0; i < theBars.length; i++)
+    {
+      theBars[i].draw();
+    }
+  }
+}

@@ -1,0 +1,54 @@
+Table userData;
+TableRow row;
+
+PFont arialMt;
+
+int i;
+
+String date;
+String area;
+String state;
+String geoId;
+int cases;
+
+void settings()
+{
+  size(SCREEN_X, SCREEN_Y);
+}
+
+void setup()
+{
+  userData = loadTable("cases1m.csv", "header");
+  println(userData.getRowCount());
+  
+  i = 0;
+  
+  arialMt = loadFont("ArialMT-24.vlw");
+  textFont(arialMt);
+}
+
+void draw()
+{ 
+  if (i < userData.getRowCount())
+  { 
+    row = userData.getRow(i);
+    
+    background(0);
+    
+    date = row.getString(0);
+    area = row.getString(1);
+    state = row.getString(2);
+    geoId = row.getString(3);
+    cases = row.getInt(4);
+    
+    text(date, 10, 50);
+    text(area, 210, 50);
+    text(state, 410, 50);
+    text(geoId, 10, 150);
+    text(cases, 210, 150);
+    
+    println("" + date + ", " + area + ", " + state + ", " + geoId + ", " + cases);
+    
+    i++;
+  }
+}

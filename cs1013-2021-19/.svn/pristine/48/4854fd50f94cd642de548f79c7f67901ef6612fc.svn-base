@@ -1,0 +1,177 @@
+class DateBreakdown                                          // this is a breakdown of the amount of cases on a specific day
+{
+  String date;
+  ArrayList<covidDataRow> theList;
+  ArrayList<String> allStates;
+  String first;
+  String second;
+  String third;
+  int firstCases;
+  int secondCases;
+  int thirdCases;
+  boolean backMp;
+  double firstPercentage;
+  int firstPercent;
+
+  DateBreakdown(ArrayList<covidDataRow> theList, String date, ArrayList<String> allStates)
+  {
+    this.date = date;
+    this.theList = theList;
+    this.allStates = allStates;
+    backMp = false;
+
+    first = "";
+    second = "";
+    third = "";
+    firstCases = 0;
+    secondCases = 0;
+    thirdCases = 0;
+
+    this.rankings();
+  }
+
+  void rankings()                                                  // this goes through each state and figures out the states with the top 3 highest cases on that day
+  {
+    covidDataRow currentRow;
+    int currentCases = 0;
+
+    for (int i = 0; i < allStates.size(); i++)
+    {
+      for (int j = 0; j < theList.size(); j++)
+      {
+        currentRow = theList.get(j);
+
+        if (allStates.get(i).equals(currentRow.state) && currentRow.date.equals(date))
+        {
+          currentCases += currentRow.cases;
+        }
+      }
+
+      if (currentCases >= firstCases)
+      {
+        secondCases = firstCases;
+        firstCases = currentCases;
+        second = first;
+        first = allStates.get(i);
+      } else if (currentCases >= secondCases) {
+        thirdCases = secondCases;
+        secondCases = currentCases;
+        third = second;
+        second = allStates.get(i);
+      } else if (currentCases >= thirdCases) {
+        thirdCases = currentCases;
+        third = allStates.get(i);
+      }
+
+      currentCases = 0;
+    }
+  }
+
+  void draw()                                                            // this just draws the top 3 cases to the screen
+  {
+    stroke(0);
+    background(130);
+    firstPercentage = (((double) firstCases / (double) dateCases) * 100);
+    firstPercent = (int) firstPercentage;
+    frameRate(2.75);
+    fill(0);
+    textFont(ArialBoldItalicMtTwenty);
+
+    //text("The state with the highest number of cases on " + date + " was " + first + " with " + firstCases + " cases.", 50, 100);
+    //text("The state with the highest number of cases on " + date + " was " + second + " with " + secondCases + " cases.", 50, 200);
+    //text("The state with the highest number of cases on " + date + " was " + third + " with " + thirdCases + " cases.", 50, 300);
+
+    backButton(mouseX, mouseY);
+
+    fill(0);
+    //textSize(50000);
+    textFont(ArialBoldItalicMtTwenty);
+    //textAlign(CENTER, CENTER);
+    text("Top cases on the " + date + " :", SCREEN_X / 2, 250);
+
+
+    // 2ND PLACE BOX
+    fill(192, 192, 192); //silver
+    //handWritten.rect(350, 550, 300, 100);
+    rect(350, 550, 300, 100);
+
+    //2ND PLACE NUMBER
+    fill(0);
+    textFont(numbersTextForty);
+    textSize(65);
+    textAlign(CENTER, CENTER);
+    text("2", 350, 550, 300, 100);
+
+    //2nd place text
+    textSize(35);
+    textFont(ArialBoldItalicMtTwenty);
+    textAlign(CENTER, CENTER);
+    text(second + ": " + secondCases, 500, 505);
+
+    //1ST PLACE BOX
+    fill(255, 215, 0); //gold
+    //handWritten.rect(650, 500, 300, 150);
+    rect(650, 500, 300, 150);
+
+    //FIRST PLACE NUMBER
+    fill(0);
+    textFont(numbersTextForty);
+    textSize(75);
+    textAlign(CENTER, CENTER);
+    text("1", 650, 500, 300, 150);
+
+    //1st place text
+    textSize(35);
+    textFont(ArialBoldItalicMtTwenty);
+    textAlign(CENTER, CENTER);
+    text(first + ": " + firstCases, 800, 455);
+
+    //3RD PLACE BOX
+    fill(205, 127, 50); //bronze
+    //handWritten.rect(950, 570, 300, 80);
+    rect(950, 570, 300, 80);
+
+    //3RD PLACE NUMBER
+    fill(0);
+    textFont(numbersTextForty);
+    textSize(55);
+    textAlign(CENTER, CENTER);
+    text("3", 950, 570, 300, 80);
+
+    //3rd place text
+    textSize(35);
+    textFont(ArialBoldItalicMtTwenty);
+    textAlign(CENTER, CENTER);
+    text(third + ": " + thirdCases, 1100, 525);
+
+    textAlign(LEFT, BOTTOM);
+  }
+
+  void backButton(int mX, int mY)                                        // this is a back button which lets the user return to the previous screen
+  {
+    if (mX >= BACK_BUTTON_ORG && mX <= BACK_BUTTON_ORG + BACK_BUTTON_X && mY >= BACK_BUTTON_ORG && mY <= BACK_BUTTON_ORG + BACK_BUTTON_Y) 
+    {
+      stroke(255);
+
+      if (backMp)
+      {  
+        backMp = false;
+        currentScreen = DAILY_SCREEN;
+      }
+    } else
+    {
+      stroke(0);
+    }
+
+    fill(grey);
+    rect(BACK_BUTTON_ORG, BACK_BUTTON_ORG, BACK_BUTTON_X, BACK_BUTTON_Y);
+
+    fill(0);
+    textFont(ArialBoldItalicMtTwenty);
+    textAlign(CENTER, CENTER);
+    text("Back",BACK_BUTTON_ORG, BACK_BUTTON_ORG, BACK_BUTTON_X, BACK_BUTTON_Y);
+    textAlign(LEFT, BOTTOM);
+    stroke(0);
+    //text("Back", BACK_BUTTON_ORG + 5, BACK_BUTTON_ORG + 20);
+  }
+}

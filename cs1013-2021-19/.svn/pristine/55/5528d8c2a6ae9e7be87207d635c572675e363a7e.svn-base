@@ -1,0 +1,48 @@
+Table userData;
+TableRow row;
+
+DataRow aDataRow;
+ArrayList theDataRows;
+
+PFont arialMt;
+
+int i;
+
+String date;
+String area;
+String state;
+String geoId;
+int cases;
+
+void settings()
+{
+  size(SCREEN_X, SCREEN_Y);
+}
+
+void setup()
+{
+  userData = loadTable("cases1m.csv", "header");          // importing the file of 1 million cases
+  println(userData.getRowCount());                        // printing out the total row count to verify the file has been imported successfully
+  
+  i = 0;
+  theDataRows = new ArrayList();
+  
+  arialMt = loadFont("ArialMT-24.vlw");
+  textFont(arialMt);
+}
+
+void draw()
+{ 
+  if (i < userData.getRowCount())
+  { 
+    row = userData.getRow(i);
+    
+    background(0);
+    
+    DataRow aDataRow = new DataRow(row);                  // creates a new DataRow object that contains all the information of a row of data
+    theDataRows.add(aDataRow);                            // adding the most recent DataRow to an array list 
+    aDataRow.draw();                                      
+    
+    i++;
+  }
+}

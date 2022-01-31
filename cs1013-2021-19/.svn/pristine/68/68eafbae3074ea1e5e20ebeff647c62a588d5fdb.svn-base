@@ -1,0 +1,155 @@
+Table covidData;
+TableRow covidRow;
+
+PImage blankUSMap;
+PFont ArialMtTwelve;
+
+ArrayList totalList;
+covidDataRow dataRow;
+String[] allMonths;
+
+String inFile;
+public static int currentScreen;
+
+DateGraph aDateGraph;
+homeScreen theHomeScreen;
+ArrayList widgetList;
+ArrayList theDays;                                                      // just for debugging delete if needs be
+String[] theDaysArray;                                                  // as is this
+
+void settings()
+{
+  size(SCREEN_X, SCREEN_Y);
+}
+
+void setup()
+{
+  inFile = "cases1m.csv";
+  covidData = loadTable(inFile, "header");
+  totalList = new ArrayList();
+  
+  ArialMtTwelve = loadFont("ArialMT-12.vlw");
+  textFont(ArialMtTwelve);
+  
+  blankUSMap = loadImage("BlankUSMap.png");
+  currentScreen = HOME_SCREEN;
+  
+  allMonths = new String[TOTAL_MONTHS];
+  fillMonths(allMonths);
+  
+  theDays = new ArrayList();
+  fillDays(allMonths[8], theDays);                          // just for debugging delete if needs be
+  println(theDays.size());                                  // for debugging
+  theDaysArray = stringListToArray(theDays);                // for debugging
+  
+  for (int i = 0; i < covidData.getRowCount(); i++) 
+  {
+    covidRow = covidData.getRow(i);
+    
+    dataRow = new covidDataRow(covidRow);
+    totalList.add(dataRow);
+  }
+  
+  theHomeScreen = new homeScreen(currentScreen);
+  aDateGraph = new DateGraph(totalList);
+}
+
+void draw()
+{
+  switch(currentScreen) {
+    case HOME_SCREEN:
+      theHomeScreen.draw();
+      break;
+    case MONTH_SCREEN:
+      aDateGraph.draw();
+      break;
+  }
+  println(currentScreen);
+}
+
+void mousePressed() {
+  if(currentScreen == MONTH_SCREEN)
+  {
+    aDateGraph.checkBarPress();
+  }
+  theHomeScreen.whenMousePressed();
+}
+void mouseMoved() {
+  theHomeScreen.whenMouseMoved(mouseX, mouseY);
+}
+
+void fillMonths(String[] months)
+{
+  int yearsRequired = months.length / 12;
+  
+  if (months.length % 12 > 0)
+  {
+    yearsRequired++;                                                                                                  // this adds another year on if there are extra months
+  }
+  
+  int currentYear = START_YEAR;
+  yearsRequired += currentYear;
+  int i = 0;
+  
+  while (currentYear < yearsRequired)                                                                                
+  {
+    for (int currentMonth = 1; currentMonth <= 12 && i < months.length; currentMonth++)
+    {
+      String selectedMonth = "" + (currentMonth < 10 ? "0" + currentMonth: + currentMonth) + "/" + currentYear;
+      months[i] = selectedMonth;                                                                                      // this stores the month in the allMonth String in the format
+      i++;                                                                                                            // MM/YY
+    }
+    currentYear++;                                                                                                    // the for loop concludes when all the months have been done for one year
+  }                                                                                                                   // the while loop concludes when all the years have been covered
+}
+
+void fillDays(String month, ArrayList<String> myList)                                                 // creates an ArrayList for a specific month
+{
+  String currentDay = "";
+  int dayLimit = 0;
+  
+  switch (month)
+  {
+    case "02/21":
+    dayLimit = 28;
+    break;
+    
+    case "02/20":
+    dayLimit = 29;
+    break;
+    
+    case "04/20":
+    case "06/20":
+    case "09/20":
+    case "11/20":
+    dayLimit = 30;
+    break;
+    
+    default:
+    dayLimit = 31;
+    break;
+  }
+  
+  for (int i = 1; i <= dayLimit; i++)
+  {
+     currentDay = (i < 10 ? "0" + i : "" + i) + "/" + month;
+     myList.add(currentDay);
+     println(currentDay);
+  }
+  
+  println(myList.size());
+}
+
+String[] stringListToArray(ArrayList<String> myList)                            // turns an ArrayList of Strings into a String array
+{
+  println(myList.size());
+  String[] theArray = new String[myList.size()];
+  
+  for (int i = 0; i < myList.size(); i++)
+  {
+    theArray[i] = myList.get(i);
+    println(theArray[i]);
+  }
+  
+  return theArray;
+}

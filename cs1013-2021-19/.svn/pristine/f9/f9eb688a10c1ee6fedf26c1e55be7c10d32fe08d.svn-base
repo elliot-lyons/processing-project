@@ -1,0 +1,127 @@
+class HeatMap {
+
+  int screen;
+  ArrayList widgetList;
+  private boolean backMp;
+  color minColour, maxColour; // heatmap colour palette
+  float dataMax;
+  String State_Name;
+  String state_Name;
+  private String state;
+  int noOfCases;
+  int addNewCases;
+
+  HashMap<String, Integer> stateCases;
+
+  String stateName;
+  int stateId;
+
+  HeatMap(int screen) { //, Table covidData) {
+    this.screen = screen;
+    this.initializer();
+    //this.covidData = covidData;
+    backMp = false;
+  }
+
+  void initializer() {
+
+    minColour = color(105, 186, 87);   // colors
+    maxColour = color(22, 84, 8);
+
+    stateCases = new HashMap<String, Integer>(); // cases within a state
+
+
+    //geoMap.writeAttributesAsTable(51); // debugging purposes
+
+    stateCases.put("Happy", 12);
+    //println(stateCases);
+    //println(covidData);
+    for (TableRow rowing : covidData.rows()) {
+      stateCases.put(rowing.getString(2).toUpperCase(), 0);
+    }
+
+    //enter cases per state
+    for (TableRow row : covidData.rows()) {
+      state = row.getString(2).toUpperCase();
+      if (stateCases.containsKey(state)) {
+        noOfCases = stateCases.get(state);
+        addNewCases = row.getInt(4);
+        noOfCases += addNewCases;
+        stateCases.put(state, noOfCases);
+      }
+    }
+
+    for (Map.Entry<String, Integer> me5 : stateCases.entrySet()) {
+      dataMax = max(dataMax, me5.getValue());
+    }
+  }
+
+  void draw() {
+    background(96, 248, 234);
+    stroke(255);               // Boundary colour
+
+    strokeWeight(1.5);
+    fill(96, 248, 234);
+    //handWritten.rect(10, 10, SCREEN_X - 20, SCREEN_Y - 20);
+   
+    //println(covidData);
+    backButton(mouseX, mouseY);
+
+    //geoMap.writeAttributesAsTable(51); // debugging purposes
+    for (int id : geoMap.getFeatures().keySet()) {
+      state_Name = geoMap.getAttributeTable().findRow(str(id), 0).getString("State_Name");
+      if (stateCases.containsKey(state_Name)) {
+        int caseAtState = stateCases.get(state_Name);
+        //println(caseAtState);
+        //if (caseAtState != 0) {
+        //float normStateName = dataRow.getInt(4)/ max;
+        float normStateName = caseAtState/334213920.0;
+        fill (lerpColor(minColour, maxColour, normStateName));
+        //println(caseAtState);
+      } else {
+        fill (255);
+      }
+      geoMap.draw(id);
+    }
+
+
+    //geoMap.draw();
+    fill(21, 60, 220);          // Land colour
+    //geoMap.draw();              // Draw map.
+    // Find the country at mouse position and draw in different colour.
+    stateId = geoMap.getID(mouseX, mouseY);
+    if (stateId != -1)
+    {
+      fill(195, 31, 29);      // Highlighted land colour.
+      geoMap.draw(stateId);
+      stateName = geoMap.getAttributeTable().findRow(str(stateId), 0).getString("State_Name");    
+      fill(0);
+      text(stateName + ": ", mouseX, mouseY - 20);
+      text(stateCases.get(stateName)+" cases", mouseX, mouseY);
+    }
+  }
+
+  void backButton(int mX, int mY)                                                    // this is a back button which lets the user return to the previous screen
+  {
+    if (mX >= BACK_BUTTON_ORG && mX <= BACK_BUTTON_ORG + BACK_BUTTON_X && mY >= BACK_BUTTON_ORG && mY <= BACK_BUTTON_ORG + BACK_BUTTON_Y) 
+    {
+      stroke(255);
+
+      if (backMp)
+      {  
+        currentScreen = HOME_SCREEN;
+        backMp = false;
+      }
+    } else
+    {
+      stroke(0);
+    }
+
+    fill(0, 0, 255);
+    rect(BACK_BUTTON_ORG, BACK_BUTTON_ORG, BACK_BUTTON_X, BACK_BUTTON_Y);
+
+    fill(255);
+    textFont(ArialBoldItalicMtTwenty);
+    text("Back", BACK_BUTTON_ORG + 5, BACK_BUTTON_ORG + 20);
+  }
+}

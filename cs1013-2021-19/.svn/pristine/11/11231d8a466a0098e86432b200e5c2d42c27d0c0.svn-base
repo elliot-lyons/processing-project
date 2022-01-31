@@ -1,0 +1,193 @@
+class DateGraph
+{
+  private double xRatio;
+  private double maxHeight;
+  private double barHeight;
+  String[] representedArray;
+  private boolean backMp;
+
+  ArrayList theList;
+  covidDataRow currentRow;
+
+  GraphBar graphBar;
+  GraphBar[] graphBarList;
+
+  DateGraph(ArrayList<covidDataRow> aList, String[] anArray)
+  { 
+    theList = aList;                                
+    graphBarList = new GraphBar[anArray.length];
+    representedArray = anArray;
+
+    xRatio = (double) GRAPH_X / (double) representedArray.length;                                                       // this determines the spacing on the x-axis for the month labels
+    initArray(graphBarList, representedArray);                                                                         
+    maxHeight = maxCases();
+    backMp = false;
+  }
+
+  void draw()
+  {
+    strokeWeight(1);
+    background(130);
+    stroke(0);
+    textFont(ArialMtTwelve);
+    line(LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN, LEFT_GRAPH_X_ORIGIN + GRAPH_X, GRAPH_Y_ORIGIN);                  // this draws the x-axis
+
+    line(LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN, LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN - GRAPH_Y);                  // this draws the y-axis
+
+    createAxes(representedArray, xRatio);                                                                      // this adds the appropriate labels to the axes
+    textFont(representedArray.length == TOTAL_MONTHS ? (ArialMtSixteen) : (ArialMtEight));
+
+    for (int i = 0; i < graphBarList.length; i++)
+    {
+      graphBar = graphBarList[i];
+      barHeight  = graphBar.currentCases * (GRAPH_Y / maxHeight);
+      graphBarList[i].mouseMoved(barHeight);
+      stroke(graphBarList[i].strokeColor);
+      fill(255, graphBar.colorNo, 0);
+
+      rect((float) (graphBar.xOrigin), (float) (graphBar.yLimit - (graphBar.currentCases * (GRAPH_Y / maxHeight))), (float) graphBar.xRatio - 1, // draws the bars
+        (float) barHeight);                                                                                      
+
+      fill(0);
+      text(graphBar.currentCases, (float) 
+        (representedArray.length == TOTAL_MONTHS ? (graphBar.currentCases < 1000000 ? (graphBar.xOrigin + 25) : graphBar.xOrigin) : graphBar.xOrigin), (float)               // draws the number of cases                                                     
+        (graphBar.yLimit - (graphBar.currentCases * (GRAPH_Y / maxHeight)) - GRAPH_X_TEXT_MARGIN));
+
+      text("cases", (float) (graphBar.xOrigin +(representedArray.length == TOTAL_MONTHS ? 15 : 0)), (float) (graphBar.yLimit - (graphBar.currentCases * (GRAPH_Y / maxHeight)) - 5));   // draws "cases"
+    }
+
+    if (breakdownUsed)                                              // this is just a bug fix, so that you can go from the date breakdown to the daily screen
+    {
+      backMp = false;
+      breakdownUsed = false;
+    }
+    backButton(mouseX, mouseY);
+    backMp = false;
+  }
+
+
+  void createAxes(String[] anArray, double xRatio)
+  {
+    double xRat = xRatio;
+    fill(0);
+    textFont(anArray.length == TOTAL_MONTHS ? (ArialBoldItalicMtSixteen) : (ArialBoldItalicMtEight));
+    for (int i = 0; i < anArray.length; i++)
+    {
+      String currentString = "" + anArray[i];
+      text(currentString, (float) (LEFT_GRAPH_X_ORIGIN + (i * xRat) + (xRat / 4)),                                    // this outputs each month onto the screen and puts it into the correct position
+        (float) (GRAPH_Y_ORIGIN + GRAPH_X_TEXT_MARGIN));                                                              // onto the x-axis as a label 
+
+      line((float) (LEFT_GRAPH_X_ORIGIN +(xRat * (i + 1))), (float) GRAPH_Y_ORIGIN,                                   // this adds a little vertical line divider between the x-axis labels 
+        (float) (LEFT_GRAPH_X_ORIGIN +(xRat * (i + 1))), (float) GRAPH_Y_ORIGIN - 5);
+    }
+
+    textFont(ArialBoldItalicMtSixteen);
+    text((int) maxHeight, (float) LEFT_GRAPH_X_ORIGIN - GRAPH_Y_TEXT_MARGIN - (maxHeight > 1000000 ? 15 : 0), 
+      (float) GRAPH_Y_ORIGIN - GRAPH_Y + DIVIDER_LINE);                                                               // this prints the number of the heighest cases at the top of the y-axis
+    line((float) LEFT_GRAPH_X_ORIGIN, (float) (GRAPH_Y_ORIGIN - GRAPH_Y), 
+      (float) LEFT_GRAPH_X_ORIGIN + DIVIDER_LINE, (float) (GRAPH_Y_ORIGIN - GRAPH_Y));                                // this adds a little horizontal divider line to the top of the y-axis
+
+    yAxisIntervals((int)maxHeight);                                                                                   // this labels the y-axis in even intervals 
+
+    textFont(ArialBoldItalicMtTwenty);
+    text("Cases", (float) (LEFT_GRAPH_X_ORIGIN - AXES_LABEL_TEXT_MARGIN),                                             // this draws "Cases" above the y-axis. It's the title of the axis
+      (float) (GRAPH_Y_ORIGIN - GRAPH_Y - 20));
+
+    text((currentScreen == MONTH_SCREEN ? "Months" : "Date"), (float) (LEFT_GRAPH_X_ORIGIN + (GRAPH_X / 2)),          // this draws the title of the x-axis below the x-axis
+      (float) (GRAPH_Y_ORIGIN + AXES_LABEL_TEXT_MARGIN));
+  }                                                                                                            
+
+  void initArray(GraphBar[] theBars, String[]anArray)                                                                 // this creates an array, of type GraphBar, of graph bars
+  {
+    for (int i = 0; i < theBars.length; i++)
+    {
+      theBars[i] = new GraphBar(anArray[i], xRatio, (theBars.length > 15 ? (i * 10) : (i * 20)), (float) (LEFT_GRAPH_X_ORIGIN + (i * xRatio)), (float) GRAPH_Y_ORIGIN, theList, i);
+      //theBars[i] = new GraphBar(anArray[i], xRatio, (theBars.length > 15 ? (i * 10) : (i * 20)), (float) (LEFT_GRAPH_X_ORIGIN + (i * xRatio)), (float) GRAPH_Y_ORIGIN, theList, i);
+    }
+  }
+
+  double maxCases()                                                                                                     // this returns the max amount of cases in an array
+  {
+    double max = 0;
+
+    for (int i = 0; i < graphBarList.length; i++)
+    {
+      double current = graphBarList[i].getCurrentCases();
+
+      if (current > max)
+      {
+        max = current;
+      }
+    }
+
+    return max;
+  }
+
+  void checkBarPress() {
+    for (int i = 0; i < graphBarList.length; i++) 
+    {
+      graphBarList[i].barMousePressed();
+    }
+  }
+
+  void yAxisIntervals(int maxH)                                                  // this creates y axis labels based on the amount of cases to be presented
+  {                                                                              // it bases the labels based off the max cases. (eg if the max cases is 700,000 
+    int i = maxH;                                                                // it will label the graph in intervals of 100,000
+    int interval = 1;                                                            // for 7,000 the interval will be 1,000 etc.
+    int tenCount = 0;
+
+    while (i >= 10)
+    {
+      i /= 10;
+      tenCount++;
+    }
+
+    while (tenCount > 0)
+    {
+      interval *= 10;
+      tenCount--;
+    }
+
+    fill(0);
+
+    for (int j = 0; j < maxHeight; j += interval)                                                                 // this loop labels the y-axis in intervals of x cases
+    {                                                                                                                 
+      text(j, (float) (j == 0 ? LEFT_GRAPH_X_ORIGIN - 10 : LEFT_GRAPH_X_ORIGIN - GRAPH_Y_TEXT_MARGIN - (interval > 1000000 ? 15 : 0)), 
+        (float) (GRAPH_Y_ORIGIN - (j * (GRAPH_Y / maxHeight))) + DIVIDER_LINE);
+
+      line((float) LEFT_GRAPH_X_ORIGIN, (float) (GRAPH_Y_ORIGIN - (j * (GRAPH_Y / maxHeight))),                   // it also puts a little horizontal divider at those intervals
+        (float) LEFT_GRAPH_X_ORIGIN + DIVIDER_LINE, (float) (GRAPH_Y_ORIGIN - (j * (GRAPH_Y / maxHeight))));
+    }
+  }
+
+  void backButton(int mX, int mY)                                  // this is a back button which lets the user return to the previous screen
+  {
+    if (mX >= BACK_BUTTON_ORG && mX <= BACK_BUTTON_ORG + BACK_BUTTON_X && mY >= BACK_BUTTON_ORG && mY <= BACK_BUTTON_ORG + BACK_BUTTON_Y) 
+    {
+      stroke(0);
+
+      if (backMp)
+      {
+        if (currentScreen == DAILY_SCREEN)
+        {
+          graphNeeded = true;
+        }
+
+        currentScreen--;
+      }
+    } else
+    {
+      stroke(255);
+    }
+
+    fill(grey);
+    rect(BACK_BUTTON_ORG, BACK_BUTTON_ORG, BACK_BUTTON_X, BACK_BUTTON_Y);
+
+    fill(0);
+    textFont(ArialBoldItalicMtTwenty);
+    textAlign(CENTER, CENTER);
+    text("Back",BACK_BUTTON_ORG, BACK_BUTTON_ORG, BACK_BUTTON_X, BACK_BUTTON_Y);
+    textAlign(LEFT, BOTTOM);
+    //text("Back", BACK_BUTTON_ORG + 5, BACK_BUTTON_ORG + 25);
+  }
+}

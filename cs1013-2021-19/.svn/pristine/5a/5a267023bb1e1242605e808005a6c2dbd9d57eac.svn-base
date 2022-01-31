@@ -1,0 +1,51 @@
+Table covidData;
+TableRow covidRow;
+
+PImage blankUSMap;
+
+ArrayList totalList;
+covidDataRow dataRow;
+
+String inFile;
+int currentScreen;
+
+DateGraph aDateGraph;
+
+void settings()
+{
+  size(SCREEN_X, SCREEN_Y);
+}
+
+void setup()
+{
+  inFile = "cases1k.csv";
+  covidData = loadTable(inFile, "header");
+  totalList = new ArrayList();
+  
+  blankUSMap = loadImage("BlankUSMap.png");
+  currentScreen = HOME_SCREEN;
+  
+  for (int i = 0; i < covidData.getRowCount(); i++) 
+  {
+    covidRow = covidData.getRow(i);
+    
+    dataRow = new covidDataRow(covidRow);
+    totalList.add(dataRow);
+  }
+  
+  aDateGraph = new DateGraph(totalList, currentScreen);
+}
+
+void draw()
+{
+  switch(currentScreen)
+  {
+    case HOME_SCREEN:
+    image(blankUSMap, 500, 300);
+    break;
+  }
+  
+  aDateGraph.draw();
+  
+}
+  

@@ -1,0 +1,64 @@
+class PieChart {
+  float diameter;
+  float lastAngle = 0;
+  float sumOfData = 0;
+  float addData;
+  float mouseAngle;
+  int[] data;
+  float[] angles;
+  float gray;
+  String[] labels;
+
+  //piechart making
+
+  PieChart(float diameter, int[] data, String[] labels) {
+    this.diameter = diameter;
+    this.data = data;
+    this.labels = labels;
+  }
+
+  void setup() {
+    //int[] data;
+
+    println(data);
+  }
+  /*
+  float dataTotal(int[] data) {
+   // find sum of all data
+   for (int i = 0; i < data.length; i++) {
+   addData = data[i];
+   sumOfData += addData;
+   }
+   return sumOfData;
+   }
+   */
+  void draw() {
+    background(255);
+    createPieChart(200, data);
+    // find sum of all data
+  }
+
+  void percentageSlices(int[] labels) {
+  }
+
+  void createPieChart(float diameter, int[] data) {
+    for (int i = 0; i < data.length; i++) {
+      //addData = data[i];
+      sumOfData += data[i];
+    }
+    //convert data to angles
+    angles = new float[data.length];
+    for (int i = 0; i < data.length; i++) {
+      angles[i] = ((data[i] / sumOfData) * 360);
+    }
+
+    //draw the piechart
+    for (int i = 0; i < angles.length; i++) {
+      gray = map(i, 0, data.length, 0, 255);
+      fill(gray);
+      handWritten.arc(width/2, height/2, diameter, diameter, lastAngle, lastAngle + radians(angles[i]));
+      lastAngle += radians(angles[i]);
+    }
+    noLoop();
+  }
+}

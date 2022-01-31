@@ -1,0 +1,68 @@
+class GraphBar
+{
+  private double xRatio;                                                                // this class creates a graph bar. It takes in:
+                                                                                        //the name of the data it's representing (data -> dataRepresented)
+  private String dataRepresented;                                                       // its width (xRat -> xRatio)
+  private int colorNo;                                                                  // its color (colorVar -> colorNo)
+                                                                                        // the x co-ordinate of the bottom of the bar (xOrg -> xOrigin) 
+  private float xOrigin;                                                                // the y co-ordinate of the axis it's on (yLim -> yLimit)
+  private float yLimit;                                                                 // and the covidDataRow list (aList -> theList)
+  private int currentCases;
+
+  ArrayList<covidDataRow> theList;
+
+  GraphBar(String data, double xRat, int colorVar, float xOrg, float yLim, ArrayList<covidDataRow> aList)
+  {
+    dataRepresented = data;
+    xRatio = xRat;
+    colorNo = colorVar;
+    xOrigin = xOrg;
+    yLimit = yLim;
+    theList = aList;
+
+    currentCases = getCurrentCases();
+    //barHeight = getHeight(currentCases);
+  }
+
+  //float getHeight(int cases)
+  //{
+  //  return (float) cases * (float) yRatio;
+  //}
+
+  int getCurrentCases()                                                                // this returns the value of the cases for the data in question
+  {
+    int cases = 0;
+    covidDataRow currentRow;
+
+    for (int j = 0; j < theList.size(); j++)
+    {
+      currentRow = (covidDataRow) totalList.get(j);
+
+      if (currentRow.date.contains(dataRepresented))
+      {
+        cases += currentRow.cases;
+      }
+    }
+    return cases;
+  }
+
+
+  //void dataLabel()
+  //{
+  //  fill(0);
+  //  text(currentCases, (float) (currentCases < 1000000 ? (xOrigin + 25) : xOrigin), (float)                                                     
+  //      (yLimit - barHeight - GRAPH_X_TEXT_MARGIN));
+        
+  //  text("cases", (float) (xOrigin + 15), (float) (yLimit - barHeight - 5));
+  //}
+
+
+  //void draw()
+  //{
+  //  fill(colorNo, 100, 100);
+
+  //  rect((float) xOrigin, (float) yLimit - barHeight, (float) xRatio, barHeight);
+    
+  //  dataLabel();
+  //}
+}

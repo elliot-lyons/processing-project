@@ -1,0 +1,19 @@
+final int SCREEN_X = 1600;
+final int SCREEN_Y = 1200;
+
+final int GRAPH_X = 1000;
+final int GRAPH_Y = 800;
+final int LEFT_GRAPH_X_ORIGIN = 100;
+final int GRAPH_Y_ORIGIN = 900;
+final int RIGHT_GRAPH_X_ORIGIN = 1100;
+final int GRAPH_X_TEXT_MARGIN = 20;
+
+final int HOME_SCREEN = 1;
+final int MONTH_SCREEN = 2;
+final int DAILY_SCREEN = 3;
+final int STATE_SCREEN = 4;
+final int COUNTY_SCREEN = 5;
+
+final int TOTAL_MONTHS = 14;
+final int START_YEAR = 2020;
+final int ONE_THOUSAND_MAX_CASES = 2746;        // this is for debugging purposes. It is the maximum amount of cases per month in the cases 1k file

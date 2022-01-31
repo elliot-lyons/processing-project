@@ -1,0 +1,22 @@
+
+ String txt;
+ float y = 0;
+ void setup() {
+ size(1200, 600, P3D);
+ String[] lines = loadStrings("cases1k.csv");
+ txt = join(lines, "\n");
+ y = height/2;
+ }
+ 
+ void draw() {
+ background(0);
+ translate(width/2, height/2);
+ 
+ fill(238, 213, 75);
+ textSize(18);
+ textAlign(CENTER);
+ rotateX(PI/5);
+ text(txt, -width/2, y, width, height * 10);
+ 
+ y -= 3;
+ }

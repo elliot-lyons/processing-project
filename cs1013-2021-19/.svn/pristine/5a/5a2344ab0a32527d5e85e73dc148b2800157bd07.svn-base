@@ -1,0 +1,61 @@
+class Screen {
+  boolean map;
+  ArrayList<Widget> widgetList;
+  int backgroundColor;
+
+  Screen(int background) {
+    this.backgroundColor = background;
+    widgetList = new ArrayList();
+  }
+
+  void setup() {
+    map = true;
+  }
+
+  void draw() {
+    //background(backgroundColor);
+    if (map) {
+      background(ocean);
+      geoMap.draw();
+      stateId = geoMap.getID(mouseX, mouseY);
+      //state name display
+      if (stateId != -1)
+      {
+        fill(180, 120, 120);      // Highlighted land colour.
+        geoMap.draw(stateId);
+        stateName = geoMap.getAttributeTable().findRow(str(stateId), 0).getString("State_Name");    
+        fill(0);
+        text(stateName, mouseX, mouseY);
+      }
+    }
+    if (!map) {
+      for (int i = 0; i < Cases.length; i++) {
+        fill(180, 25, 69);
+        rect(0, i*19, Cases[i], 20);
+        textSize(12);
+        fill(0);
+        text(States[i], 250, i*19 + 20);
+        text(str(Cases[i]), 200, i*19 + 20);
+        textSize(50);
+        text("Number of cases", 480, 620);
+        text("by State", 500, 680);
+      }
+      //noLoop();
+    }
+    for (int i = 0; i < widgetList.size(); i++) {
+      Widget aWidget = widgetList.get(i);
+      aWidget.draw();
+    }
+  }
+
+  void addWidget(Widget aWidget) {
+    widgetList.add(aWidget);
+  }
+
+  void currentScreen() {
+    if (backgroundColor == 255) { 
+      map = false;
+    }
+    map = true;
+  }
+}

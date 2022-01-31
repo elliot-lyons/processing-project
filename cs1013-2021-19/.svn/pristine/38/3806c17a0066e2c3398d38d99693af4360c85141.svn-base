@@ -1,0 +1,59 @@
+class Virus {
+  float xPosition;
+  float yPosition;
+  float xDirection;
+  float yDirection;
+  float pi;
+  
+  Virus (int x,int y) {
+    xPosition = x;
+    yPosition = y;
+    xDirection = 1;
+    yDirection = 1;
+    pi = (float)Math.PI;
+  }
+  
+  void draw() 
+  {
+    image(virusImage, xPosition, yPosition);
+  }
+  
+ void move() 
+  {
+    if (xPosition >= 0 && xPosition <= SCREEN_X && yPosition >= 0 && yPosition <= SCREEN_Y) 
+    {
+     if (yDirection == 1)
+     {
+       yPosition++;
+       if (xDirection == 1)
+       {
+         xPosition++;
+       }
+       else if (xDirection == -1)
+       {
+         xPosition--;
+       }
+     }
+     else if (yDirection == -1)
+     {
+       yPosition--;
+       if (xDirection == 1)
+       {
+         xPosition++;
+       }
+       else if (xDirection == -1)
+       {
+         xPosition--;
+       }
+     }
+    }
+    if (xPosition == 0 || xPosition + VIRUS_LENGTH == SCREEN_X)
+    {
+        xDirection = -xDirection;
+    }
+    else if (yPosition == 0 || yPosition + VIRUS_HEIGHT == SCREEN_Y)
+    {
+        yDirection = -yDirection;
+    }
+  }
+}

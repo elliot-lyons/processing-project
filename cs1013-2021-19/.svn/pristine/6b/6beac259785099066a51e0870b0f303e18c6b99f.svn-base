@@ -1,0 +1,298 @@
+import org.gicentre.geomap.*;
+import java.util.Map;
+import org.gicentre.utils.stat.*;
+//import org.gicentre.handy.*;
+
+Table covidData;
+TableRow covidRow;
+
+GeoMap geoMap;
+
+//HandyRenderer handWritten; // handwriting fill options
+
+PImage blankUSMap;
+PFont ArialMtTwelve;
+PFont ArialMtEight;
+PFont ArialMtTen;
+PFont ArialBoldItalicMtTwenty;
+PFont ArialBoldItalicMtSixteen;
+PFont ArialBoldItalicMtEight;
+PFont ArialMtTwenty;
+PFont ArialMtSixteen;
+PFont numbersTextForty;
+
+color yellow, lightYellow, grey;
+
+ArrayList totalList;
+covidDataRow dataRow;
+String[] allMonths;
+
+String inFile;
+public static int currentScreen;
+public static boolean graphNeeded;
+public static int monthNeeded;
+private static boolean breakdownNeeded;
+private static String breakdownDate;
+private static boolean breakdownUsed;
+private static int dateCases;
+
+DateGraph aDateGraph;
+homeScreen theHomeScreen;
+charityScreen theCharity;
+HeatMap theHeatMap;
+ArrayList widgetList;
+ArrayList theDays;                                                  
+ArrayList theStates;
+String[] theDaysArray;                                                  
+DateBreakdown aDateBreakdown;
+
+void settings()
+{
+  size(SCREEN_X, SCREEN_Y);
+}
+
+void setup() {
+  inFile = "daily-1M.csv";
+  covidData = loadTable(inFile, "header");
+  totalList = new ArrayList();
+
+  for (int i = 0; i < covidData.getRowCount(); i++)              // this creates an array list filled with covidDataRow objects
+  {                                                              // each covidDataRow represents a row from the CSV file and has its own date, state, cases etc.
+    covidRow = covidData.getRow(i);
+    dataRow = new covidDataRow(covidRow);
+    totalList.add(dataRow);
+  }
+
+  geoMap = new GeoMap(10, 10, SCREEN_X - 25, SCREEN_Y - 25, this);  // Create the geoMap object.
+  geoMap.readFile("States_shapefile");     // Reads shapefile.
+  //textAlign(LEFT, BOTTOM);
+  //textSize(18);
+
+  //handWritten = HandyPresets.createWaterAndInk(this);
+  //handWritten.setSeed(1);
+
+  ArialMtTwelve = loadFont("ArialMT-12.vlw");
+  textFont(ArialMtTwelve);
+  ArialMtEight =loadFont("ArialMT-8.vlw");
+  ArialMtTen = loadFont("ArialMT-10.vlw");
+  ArialBoldItalicMtTwenty = loadFont("Arial-BoldItalicMT-20.vlw");
+  ArialBoldItalicMtSixteen = loadFont("Arial-BoldItalicMT-16.vlw");
+  ArialBoldItalicMtEight = loadFont("Arial-BoldItalicMT-8.vlw");
+  ArialMtTwenty = loadFont("ArialMT-20.vlw");
+  ArialMtSixteen = loadFont("ArialMT-16.vlw");
+  numbersTextForty = loadFont("Skia-Regular_Black-Extended-40.vlw");
+
+  yellow = color(255, 255, 0);
+  lightYellow = color(255, 255, 153);
+  grey = color(211);
+
+  currentScreen = HOME_SCREEN;                  
+  graphNeeded = false;
+  breakdownNeeded = false;                     
+  breakdownDate = "";
+  breakdownUsed = false;
+  dateCases = 0;
+
+  allMonths = new String[TOTAL_MONTHS];
+  fillMonths(allMonths);
+
+  theStates = new ArrayList();
+  fillStates(totalList, theStates);
+
+  theHomeScreen = new homeScreen(currentScreen);
+  theCharity = new charityScreen(currentScreen);
+  theHeatMap = new HeatMap(currentScreen);
+  //println(totalList);
+}
+
+void draw()
+{
+
+  switch(currentScreen) {                                          // this determines what will be drawn onto the screen
+  case HOME_SCREEN:
+    theHomeScreen.draw();
+    break;
+
+  case MONTH_SCREEN:
+    if (graphNeeded)                                                // the booleans in this switch statement create a graph or a breakdown if needed
+    {                                                               // ie if a new graph is needed, create a new graph. graphNeeded is only to trigger the constructor
+      aDateGraph = new DateGraph(totalList, allMonths);             // This is because it will continue to draw that same graph until the screen is changed and/or a new graph is needed
+      graphNeeded = false;
+    }
+    aDateGraph.draw();
+    break;
+
+  case DAILY_SCREEN:
+    if (graphNeeded)
+    {
+      theDays = new ArrayList();
+      fillDays(allMonths[monthNeeded], theDays);                          
+      theDaysArray = stringListToArray(theDays);
+      aDateGraph = new DateGraph(totalList, theDaysArray);          // this just constructs a daily graph based on the month the user selects
+      graphNeeded = false;
+    }
+    aDateGraph.draw();
+    break;
+
+  case DATE_BREAKDOWN_SCREEN:
+    {
+      if (breakdownNeeded)
+      {
+        aDateBreakdown = new DateBreakdown(totalList, breakdownDate, theStates);         // this constructs a breakdown of a date that a user selects from the daily graph           
+        breakdownNeeded = false;
+        breakdownUsed = true;
+      }
+      aDateBreakdown.draw();
+      break;
+    }
+
+  case CHARITY_SCREEN:
+    {
+      theCharity.draw();
+      break;
+    }
+
+  case HEATMAP_SCREEN:
+    {
+      theHeatMap.draw();
+      break;
+    }
+  }
+}
+
+void mousePressed() {                              // this determines what happens when the mouse is pressed based on the screen
+  switch(currentScreen) {
+
+  case HOME_SCREEN:
+    theHomeScreen.whenMousePressed();
+    break;
+
+  case MONTH_SCREEN:
+    aDateGraph.checkBarPress();
+    aDateGraph.backMp = true;
+    break;
+
+  case DAILY_SCREEN:
+    aDateGraph.checkBarPress();
+    aDateGraph.backMp = true;
+    break;
+
+  case DATE_BREAKDOWN_SCREEN:
+    aDateBreakdown.backMp = true;
+    break;
+
+  case CHARITY_SCREEN:
+    theCharity.whenMousePressed();
+    break;
+
+  case HEATMAP_SCREEN:
+    theHeatMap.backMp = true;
+    break;
+  }
+}
+void mouseMoved() {
+  theHomeScreen.whenMouseMoved(mouseX, mouseY);
+  if (currentScreen == CHARITY_SCREEN)
+  {
+    theCharity.whenMouseMoved(mouseX, mouseY);
+  }
+}
+
+void fillMonths(String[] months)
+{
+  int yearsRequired = months.length / 12;
+
+  if (months.length % 12 > 0)
+  {
+    yearsRequired++;                                                                                                  // this adds another year on if there are extra months
+  }
+
+  int currentYear = START_YEAR;
+  yearsRequired += currentYear;
+  int i = 0;
+
+  while (currentYear < yearsRequired)                                                                                
+  {
+    for (int currentMonth = 1; currentMonth <= 12 && i < months.length; currentMonth++)
+    {
+      String selectedMonth = "" + (currentMonth < 10 ? "0" + currentMonth: + currentMonth) + "/" + currentYear;
+      months[i] = selectedMonth;                                                                                      // this stores the month in the allMonth String in the format
+      i++;                                                                                                            // MM/YY
+    }
+    currentYear++;                                                                                                    // the for loop concludes when all the months have been done for one year
+  }                                                                                                                   // the while loop concludes when all the years have been covered
+}
+
+void fillDays(String month, ArrayList<String> myList)                                                 // creates an ArrayList for a specific month
+{
+  String currentDay = "";
+  int dayLimit = 0;
+
+  switch (month)
+  {
+  case "02/21":
+    dayLimit = 28;
+    break;
+
+  case "02/20":
+    dayLimit = 29;
+    break;
+
+  case "04/20":
+  case "06/20":
+  case "09/20":
+  case "11/20":
+    dayLimit = 30;
+    break;
+
+  default:
+    dayLimit = 31;
+    break;
+  }
+
+  for (int i = 1; i < dayLimit; i++)
+  {
+    currentDay = (i < 10 ? "0" + i : "" + i) + "/" + month;
+    myList.add(currentDay);
+  }
+}
+
+void fillStates(ArrayList<covidDataRow> theList, ArrayList<String> myList)              // this puts the states into an array list
+{
+  String currentState = "";
+  covidDataRow currentRow; 
+  boolean needsAdding = true;
+
+  for (int i = 0; i < theList.size(); i++)
+  {
+    currentRow = theList.get(i);
+    currentState = currentRow.state;
+
+    for (int j = 0; j < myList.size(); j++)
+    {
+      if (currentState.equals(myList.get(j)))
+      {
+        needsAdding = false;
+      }
+    }
+
+    if (needsAdding)
+    {
+      myList.add(currentState);
+    }
+
+    needsAdding = true;
+  }
+}
+
+String[] stringListToArray(ArrayList<String> myList)                            // turns an ArrayList of Strings into a String array
+{
+  String[] theArray = new String[myList.size()];
+
+  for (int i = 0; i < myList.size(); i++)
+  {
+    theArray[i] = myList.get(i);
+  }
+
+  return theArray;
+}

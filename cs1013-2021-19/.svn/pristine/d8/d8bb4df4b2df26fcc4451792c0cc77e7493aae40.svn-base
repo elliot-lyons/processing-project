@@ -1,0 +1,136 @@
+class homeScreen {
+  int screen;
+  ArrayList widgetList;
+  color strokeColour;
+
+  PImage libertyStatue, covid19HSE, blankUSMAP; 
+
+  Widget Charity, Monthly, Yearly, States, Welcome, Heatmap;
+  PFont widgetFont;
+
+  homeScreen(int screen)
+  { 
+    this.screen = screen;
+    strokeColour = color(0, 0, 255);
+    widgetFont = loadFont("AgencyFont.vlw");
+    textFont(widgetFont);
+
+    libertyStatue = loadImage("LibertyStatue.jpg");         // Simple image loading
+    covid19HSE = loadImage("CovidHSE.jpg");
+    blankUSMAP = loadImage("MutlicolouredUSMap.png");
+
+    widgetList = new ArrayList();
+    Charity = new Widget (1300, 410, 280, 70, "Charity", 
+      yellow, widgetFont, CHARITY);
+
+    Monthly = new Widget (1300, 330, 280, 70, "Monthly Statistics", 
+      yellow, widgetFont, MONTHLY);
+
+    States = new Widget (1300, 490, 280, 70, "State Statistics", 
+      yellow, widgetFont, STATES);
+    Heatmap = new Widget (1300, 570, 280, 70, "Heat Map", 
+      yellow, widgetFont, HEATMAP);
+
+    Welcome = new Widget (450, 15, 725, 60, "Welcome to the US Covid-19 Data and Statistics", 
+      color (255, 255, 255), widgetFont, WELCOME);
+
+    widgetList.add(Welcome);
+    widgetList.add(Charity);
+
+    widgetList.add(Monthly);
+
+    widgetList.add(States);
+    widgetList.add(Heatmap);
+  }
+
+  void settings() {
+    size(SCREEN_X, SCREEN_Y);
+  }
+
+  void draw() {
+
+    image(libertyStatue, 1, 1);                                 
+    libertyStatue.resize(1600, 1200);      //Background
+
+    //image(covid19HSE, 688, 700);          //Bottom right image
+    //covid19HSE.resize(512, 256);
+
+    strokeWeight(4);
+    Welcome.draw();
+    Charity.draw();
+    Monthly.draw();
+
+    States.draw();
+    Heatmap.draw();
+    
+    fill(255);                          // these few lines of code print out today's cases and deaths, and the total cases and deaths because of it (10/04: total cases = 31.1 mil, total deaths = 561231
+    text("Today, there were " + todaysCases + " new cases and " + todaysDeaths + " deaths.", 175, 200);        // new cases = 64285 and new deaths = 700)
+    text("This brings the total number of cases to " + overallCurrentCases + ", and overall deaths to " + overallCurrentDeaths + ".", 175, 250);
+    textFont(ArialBoldItalicMtTwenty);
+    text("(Source: https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html)", 800, 275);
+  }
+
+  void whenMouseMoved(int x, int y) {                        //Mouse hovering over buttons for widget highlight
+    int event;
+    for (int i = 0; i < widgetList.size(); i++) {
+      Widget theWidget = (Widget) widgetList.get(i);
+      event = theWidget.getEvent(x, y);
+      switch(event) {
+      case CHARITY:
+      case MONTHLY:
+
+      case STATES:
+      case HEATMAP:
+        theWidget.strokeColor=(color(255));
+
+        break;
+      case EVENT_NULL:
+        theWidget.strokeColor=(color(0));
+        break;
+      }
+    }
+  }
+
+  void whenMousePressed() {
+    int event;
+    if (currentScreen == HOME_SCREEN)
+    {
+      for (int i = 0; i < widgetList.size(); i++)
+      {
+        Widget aWidget = (Widget) widgetList.get(i);
+        event = aWidget.getEvent(mouseX, mouseY);
+        if (event == CHARITY)
+        {
+          println("Charity Button Pressed");
+          currentScreen = CHARITY_SCREEN;
+        } else if (event != CHARITY)
+        {
+          event = aWidget.getEvent(mouseX, mouseY);
+          if (event == MONTHLY)
+          {
+            println("Home monthly pressed");
+            currentScreen = MONTH_SCREEN;
+            graphNeeded = true;
+          } else if (event != MONTHLY)
+          {
+            event = aWidget.getEvent(mouseX, mouseY);
+            if (event == HEATMAP) 
+            {
+              println("HEATMAP");
+              currentScreen = HEATMAP_SCREEN;
+            } else if (event != HEATMAP)
+            {
+              event = aWidget.getEvent(mouseX, mouseY);
+              if (event == DAILY) 
+              {
+                println("HEATMAP");
+                currentScreen = DAILY_SCREEN;
+                graphNeeded = true;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

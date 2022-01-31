@@ -1,0 +1,53 @@
+// CSV file is called "cases1k.csv" 
+// It's in the project's data folder.
+//
+// date,area,state,geoid,cases,country
+
+Table table;
+String infile;
+ArrayList allRows;
+DataRows dataRow;
+public static float yVal;
+float f=0.001;
+
+void settings() {
+  size(500, 500);
+}
+
+
+
+
+void setup() {
+  infile = "cases1k.csv";
+  table = loadTable(infile, "header");
+  println(table.getRowCount() + " total rows in table");
+  // creates arraylist of all rows
+  allRows = new ArrayList();
+  yVal = 0;
+  // creates table.getRowCount() instances of DataRows class
+  for (int i = 0; i < table.getRowCount(); i++) 
+  {
+    dataRow = new DataRows(i, yVal);
+    allRows.add(dataRow);
+    // prints all data rows
+    dataRow.printRows();
+    yVal = yVal + 20;
+  }
+}
+
+void draw() {
+  background(255);
+  fill(0);
+  // displays text for each instance of DataRows
+  for (int i = 0; i < table.getRowCount(); i++) 
+  {
+    DataRows aRow = (DataRows) allRows.get(i);
+    aRow.draw();
+    aRow.move();
+  }
+  f=0;
+}
+void mouseWheel(MouseEvent event ) {   // mouseWheel method to control the text 
+  f = event.getCount();
+  println(f);
+}

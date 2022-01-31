@@ -1,0 +1,44 @@
+class DrawBars
+{
+  GraphBar[] theBars;                                                          // this class is solely for drawing the bars of a graph and displaying the number of cases beside the bars 
+  GraphBar currentBar;
+  MaxHeightCalculator max;
+
+  DrawBars(GraphBar[] theBars, MaxHeightCalculator max)
+  {
+    this.theBars = theBars;
+    this.max = max;
+  }
+
+  void drawTheBars()
+  {
+    for (int i = 0; i < theBars.length; i++)
+    {
+      currentBar = theBars[i];
+      fill(currentBar.colorNo, 100, 100);
+
+      rect((float) (currentBar.xOrigin), (float) (currentBar.yLimit - (currentBar.currentCases * (GRAPH_Y / max.theMaxCases))), (float) currentBar.xRatio,     // draws the bars
+        (float) (currentBar.currentCases * (GRAPH_Y / max.theMaxCases)));                                                                                      // see below for variable names
+
+      fill(0);
+      text(currentBar.currentCases, (float) (currentBar.currentCases < 1000000 ? (currentBar.xOrigin + 25) : currentBar.xOrigin), (float)                      // draws the number of cases                                                     
+        (currentBar.yLimit - (currentBar.currentCases * (GRAPH_Y / max.theMaxCases)) - GRAPH_X_TEXT_MARGIN));
+
+      text("cases", (float) (currentBar.xOrigin + 15), (float) (currentBar.yLimit - (currentBar.currentCases * (GRAPH_Y / max.theMaxCases)) - 5));             // draws "cases"
+    }
+  }
+}
+
+// VARIABLE NAMES:
+// currentBar.xOrigin = the starting x co-ordinate of the axis
+
+// currentBar.yLimit = y co-ordinate of the axis
+
+// currentBar.currentCases * (GRAPH_Y / max.theMaxCases) = the height of the bar. This is because of how the graph is formulated. The tallest bar on the graph will span the entirity 
+// of the y axis. By diviving the height of the graph (GRAPH_Y) by the max amount of cases present on the entire graph (max.theMaxCases), we find the amount of pixels one case takes up
+// as such. By multiplying this by currentBar.currentCases (i.e. the amount of cases in this bar), we find the height of the current bar
+
+// currentBar.xRatio = the width of the bar
+
+// currentBar.currentCases < 1000000 ? (currentBar.xOrigin + 25) : currentBar.xOrigin = this is to determine the placing of the number of cases. If currentCases is less than 100000, the cases
+// are displayed in a more centred position. If cases are greater than or equal to 100000, the cases are simply displayed right above the bar

@@ -1,0 +1,44 @@
+class heatMap {
+
+  int screen;
+  ArrayList widgetList;
+  private boolean backMp;
+
+
+  heatMap(int screen) {
+    this.screen = screen;
+    backMp = false;
+  }
+  void settings() {
+    size(SCREEN_X, SCREEN_Y);
+  }
+  void draw() {
+    background(51);
+    backButton(mouseX, mouseY);
+  }
+  
+  void backButton(int mX, int mY)                                                    // this is a back button which lets the user return to the previous screen
+  {
+    if (mX >= BACK_BUTTON_ORG && mX <= BACK_BUTTON_ORG + BACK_BUTTON_X && mY >= BACK_BUTTON_ORG && mY <= BACK_BUTTON_ORG + BACK_BUTTON_Y) 
+    {
+      stroke(255);
+      
+      if (backMp)
+      {  
+        currentScreen = HOME_SCREEN;
+        backMp = false;
+      }
+    }
+    else
+    {
+      stroke(0);
+    }
+    
+    fill(0, 0, 255);
+    rect(BACK_BUTTON_ORG, BACK_BUTTON_ORG, BACK_BUTTON_X, BACK_BUTTON_Y);
+    
+    fill(255);
+    textFont(ArialBoldItalicMtTwenty);
+    text("Back", BACK_BUTTON_ORG + 5, BACK_BUTTON_ORG + 20);
+  }
+}

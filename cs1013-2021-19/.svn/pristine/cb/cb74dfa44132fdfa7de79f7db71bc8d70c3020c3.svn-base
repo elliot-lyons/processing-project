@@ -1,0 +1,94 @@
+class homeScreen {
+  int screen;
+  ArrayList widgetList;
+  color strokeColour;
+
+  PImage blankusImage;
+
+  Widget Daily, Monthly, Yearly, States;
+  PFont widgetFont;
+
+  homeScreen(ArrayList theList, int screen)
+  { 
+    widgetList = theList;
+    this.screen = screen;
+    strokeColour = color(0, 0, 255);
+  }
+
+
+  void settings() {
+    size(SCREEN_X, SCREEN_Y);
+  }
+  void setup() {
+
+    widgetFont = loadFont("AgencyFont.vlw");
+    blankusImage = loadImage("MutlicolouredUSMap.png");
+
+    textFont(widgetFont);
+    widgetList = new ArrayList();
+    widgetList.add(Daily);
+    widgetList.add(Monthly);
+    widgetList.add(Yearly);
+    widgetList.add(States);
+    Daily = new Widget (1250, 350, 280, 80, "Daily statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON1);
+    Monthly = new Widget (1250, 450, 280, 80, "Monthly Statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON2);
+    Yearly = new Widget (1250, 550, 280, 80, "Yearly Statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON3);
+    States = new Widget (1250, 650, 280, 80, "State Statistics", 
+      color (0, 0, 255), widgetFont, EVENT_BUTTON4);
+  }
+
+  void draw() {
+    background(95, 0, 0);
+    blankusImage.resize(938, 593);
+    image(blankusImage, 50, 300);
+
+    strokeWeight(5);
+    Daily.draw();
+    Monthly.draw();
+    Yearly.draw();
+    States.draw();
+  }
+  void whenMouseMoved(int x, int y) {
+    int event;
+    for (int i = 0; i < widgetList.size(); i++) {
+      Widget theWidget = (Widget) widgetList.get(i);
+      event = theWidget.getEvent(x, y);
+      switch(event) {
+      case EVENT_BUTTON1:
+      case EVENT_BUTTON2:
+      case EVENT_BUTTON3:
+      case EVENT_BUTTON4:
+        theWidget.strokeColor=(color(0, 0, 100));
+        println("hover");
+        break;
+      case EVENT_NULL:
+        theWidget.strokeColor=(color(0));
+        break;
+      }
+    }
+  }
+  void whenMousePressed(int x, int y) {
+    int event;
+    for (int i = 0; i<widgetList.size(); i++) {
+      Widget theWidget = (Widget) widgetList.get(i);
+      event = theWidget.getEvent(x, y);
+      switch(event) {
+      case EVENT_BUTTON1:
+        println("Daily");
+        break;
+      case EVENT_BUTTON2:
+        println("Monthly");
+        break;
+      case EVENT_BUTTON3:
+        println("Yearly");
+        break;
+      case EVENT_BUTTON4:
+        println("States");
+        break;
+      }
+    }
+  }
+}

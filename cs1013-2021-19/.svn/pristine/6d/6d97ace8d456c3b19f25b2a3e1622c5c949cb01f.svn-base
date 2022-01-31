@@ -1,0 +1,29 @@
+class DateGraph
+{
+  double xRatio;
+  double yRatio;
+  
+  ArrayList theList;
+  
+  DateGraph(ArrayList<covidDataRow> aList, int screen)
+    {
+       // for (int i = 0; i < aList.size(); i++)
+       // {
+       // }
+       
+       theList = aList;
+    }
+    
+    void xAxis(String xVariable)
+    {
+    }
+    
+    void draw()
+    {
+      line(LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN, LEFT_GRAPH_X_ORIGIN + GRAPH_X, GRAPH_Y_ORIGIN);
+       stroke(100);
+       
+       line(LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN, LEFT_GRAPH_X_ORIGIN, GRAPH_Y_ORIGIN - GRAPH_Y);
+       stroke(100);
+    }
+}

@@ -1,0 +1,28 @@
+class MaxHeightCalculator
+{
+  GraphBar[] theBars;
+  private double theMaxCases;
+  
+  MaxHeightCalculator(GraphBar[] theBars)                      // this whole class essentially takes an array of Graph Bars and determines the maximum number of cases in the array
+  {                                                            // it is used mainly to help the DrawBars class so that it can draw the bars correctly. See that class for more
+    this.theBars = theBars;
+    theMaxCases = maxCases();
+  }
+ 
+  double maxCases()
+  {
+    double max = 0;
+    
+    for (int i = 0; i < theBars.length; i++)
+    {
+      double current = theBars[i].getCurrentCases();
+      
+      if (current > max)
+      {
+        max = current;
+      }
+    }
+    
+    return max;
+  }
+}
